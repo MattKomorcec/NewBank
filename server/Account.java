@@ -24,6 +24,7 @@ public class Account {
 		return openingBalance;
 	}
 
+	//add setter for opening balance
 	public void setOpeningBalance(double d){
 		openingBalance = d;
 	}

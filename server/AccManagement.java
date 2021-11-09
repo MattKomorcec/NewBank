@@ -2,14 +2,11 @@ package newbank.server;
 
 public class AccManagement{
 
-    public AccManagement() {
-    }
-
-    //showAccounts
+    //showAccounts - prints out account names and balances
     public String showMyAccounts(CustomerID customer) {
         return (NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString();
     }
-    //newAccount
+    //newAccount - creates new account
     public String newAccount(CustomerID customer, NewBankClientHandler newBankClientHandler){
 
         boolean valid = false;
@@ -26,7 +23,8 @@ public class AccManagement{
                 newBankClientHandler.sendOutput("Account name must not be blank, please try again.");
                 continue;
             }
-            //if account name already exists, prompt new input, else valid is true and exit while loop
+            //if account name already exists, error message and prompts new input,
+            //else exit while loop
             if (!NewBank.getBank().getCustomers().get(customer.getKey()).checkExistingAccount(newAccountName)){
                 valid = true;
             }else{

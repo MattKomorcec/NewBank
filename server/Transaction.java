@@ -9,7 +9,7 @@ public class Transaction {
     Account toAccount;
     Customer toCustomer;
 
-    //move funds
+    //move funds between personal accounts
     public String moveFunds(CustomerID customer, NewBankClientHandler newBankClientHandler){
 
         //gets user to input amount to transfer
@@ -67,12 +67,13 @@ public class Transaction {
         double toBalance = toAccount.getOpeningBalance();
         toAccount.setOpeningBalance(toBalance + amount);
 
+        //prints the updated fromAccount balance
         newBankClientHandler.sendOutput("New account balance:");
         newBankClientHandler.sendOutput((NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString());
 
         return "SUCCESS";
     }
-
+    //gets user input for transfer
     private double getAmount(NewBankClientHandler newBankClientHandler){
         valid = false;
 
@@ -86,9 +87,11 @@ public class Transaction {
                 if (checkNegative(Double.parseDouble(input))){
                     newBankClientHandler.sendOutput("Invalid negative input, please try again:");
                 }else {
+                    //if type double and non-negative, returns the input as type double
                     return Double.parseDouble(input);
                 }
             }else {
+                //invalid input, loops
                 newBankClientHandler.sendOutput("Invalid input, please try again:");
             }
         }
@@ -99,12 +102,13 @@ public class Transaction {
         String input;
         Account account;
         valid = false;
-        /* asks for account name
-           if the account exists, it return the account
-           else invalid input and loops
-         */
+
         while (valid == false) {
+            //asks for account name
             input = newBankClientHandler.getInput();
+
+            //checks if account exists, if it does then returns the Account Object
+            //Otherwise, error message and loops
             if (NewBank.getBank().getCustomers().get(customer.getKey()).checkExistingAccount(input)){
                 valid = true;
                 return NewBank.getBank().getCustomers().get(customer.getKey()).getExistingAccount(input);
@@ -119,12 +123,11 @@ public class Transaction {
         String input;
         Customer payee;
         valid = false;
-        /* asks for customer name
-           if the account exists, it returns the account
-           else invalid input and loops
-         */
         while (valid == false) {
+            //asks for customer name
             input = newBankClientHandler.getInput();
+            //checks if customer exists, if does returns Customer Object
+            //else loops
             if (NewBank.getBank().getCustomers().containsKey(input)){
                 valid = true;
                 payee = NewBank.getBank().getCustomers().get(input);
@@ -140,12 +143,12 @@ public class Transaction {
         String input;
         Account account;
         valid = false;
-        /* asks for the payee's account name
-           if the account exists, it return the account
-           else invalid input and loops
-         */
+
         while (valid == false) {
+            //asks for payee account input
             input = newBankClientHandler.getInput();
+            //if account exists, returns the Account Object
+            //else error message and loops
             if (toCustomer.checkExistingAccount(input)){
                 valid = true;
                 return toCustomer.getExistingAccount(input);
@@ -167,11 +170,12 @@ public class Transaction {
         return true;
     }
 
+    //if sufficient funds, return true else false
     private boolean checkSufficientFunds(double amount, Account fromAccount) {
         return !((fromAccount.getOpeningBalance() - amount) < 0);
     }
 
-
+    //if argument is negative return true
     private boolean checkNegative(double d){
         return d < 0;
     }
