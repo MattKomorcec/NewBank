@@ -6,7 +6,12 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
-	
+
+	//initialised AccManagement Object
+	private AccManagement accManagement= new AccManagement();
+	//initialised Transaction Object
+	private Transaction transaction = new Transaction();
+
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
@@ -38,18 +43,21 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request) {
+	public synchronized String processRequest(CustomerID customer, String request, NewBankClientHandler newBankClientHandler) {
 		if(customers.containsKey(customer.getKey())) {
 			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+				case "1" : return accManagement.showMyAccounts(customer);
+				case "2" : return accManagement.newAccount(customer, newBankClientHandler);
+				case "3" : return transaction.moveFunds(customer, newBankClientHandler);
+				case "4" : return transaction.payFunds(customer, newBankClientHandler);
 			default : return "FAIL";
 			}
 		}
 		return "FAIL";
 	}
-	
-	private String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
-	}
 
+	//added getter method for customers HashMap
+	public HashMap<String,Customer> getCustomers(){
+		return customers;
+	}
 }

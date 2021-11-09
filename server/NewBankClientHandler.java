@@ -12,7 +12,6 @@ public class NewBankClientHandler extends Thread{
 	private BufferedReader in;
 	private PrintWriter out;
 	
-	
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -37,7 +36,9 @@ public class NewBankClientHandler extends Thread{
 				while(true) {
 					String request = in.readLine();
 					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
+
+					//*** added pass newBankClientHandler Object into processRequest so it can call methods
+					String responce = bank.processRequest(customer, request, this);
 					out.println(responce);
 				}
 			}
@@ -58,4 +59,25 @@ public class NewBankClientHandler extends Thread{
 		}
 	}
 
+
+	//added getInput method, keeps input handling in NewBankClientHandler class
+	public String getInput(){
+
+		try {
+			String input = in.readLine();
+			return input;
+		}catch (IOException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	//added sendOutput method, keeps input handling in NewBankClientHandler class
+	public void sendOutput(String s){
+		try {
+			out.println(s);
+		}catch (RuntimeException e){
+			e.printStackTrace();
+		}
+	}
 }
