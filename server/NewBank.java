@@ -1,6 +1,7 @@
 package newbank.server;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class NewBank {
 	
@@ -59,5 +60,15 @@ public class NewBank {
 	//added getter method for customers HashMap
 	public HashMap<String,Customer> getCustomers(){
 		return customers;
+	}
+
+	//added getter method for
+	public String getID(Customer c) {
+		for (Entry<String, Customer> entry : customers.entrySet()) {
+			if (entry.getValue().equals(c)) {
+				return entry.getKey();
+			}
+		}
+		return "";
 	}
 }

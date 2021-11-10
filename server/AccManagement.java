@@ -15,8 +15,11 @@ public class AccManagement{
         while (valid == false) {
 
             //ask for account name
-            newBankClientHandler.sendOutput("Please enter new account name:");
+            newBankClientHandler.sendOutput("Please enter new account name ('q' to quit):");
             newAccountName = newBankClientHandler.getInput();
+
+            //if user quits
+            if (checkQuitInput(newAccountName)){return "MENU";}
 
             //if account name is blank, loop
             if (newAccountName.trim().length()==0 || newAccountName.length() ==0){
@@ -34,6 +37,13 @@ public class AccManagement{
         //creates new account, defaults to balance of 0.0
         NewBank.getBank().getCustomers().get(customer.getKey()).addAccount(new Account(newAccountName, 0.0));
         return "SUCCESS";
+    }
+
+    private boolean checkQuitInput(String s){
+        if (s.equals("Q") || s.equals( "q")){
+            return true;
+        }
+        return false;
     }
 
 }
