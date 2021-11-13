@@ -11,6 +11,7 @@ public class AccManagement{
 
         boolean valid = false;
         String newAccountName = "";
+        newBankClientHandler.sendOutput("Selected: Create new account");
 
         while (valid == false) {
 
@@ -40,7 +41,7 @@ public class AccManagement{
     }
 
     private boolean checkQuitInput(String s){
-        if (s.equals("Q") || s.equals( "q")){
+        if (s.equalsIgnoreCase("Q")){
             return true;
         }
         return false;

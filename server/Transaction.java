@@ -52,6 +52,7 @@ public class Transaction {
     }
 
     public String payFunds(CustomerID customer, NewBankClientHandler newBankClientHandler){
+        newBankClientHandler.sendOutput("Selected: Make payment");
         //gets user to input transfer amount
         amount = getAmount(newBankClientHandler);
         //if user quit
