@@ -1,26 +1,26 @@
 package newbank.server;
 
-public class AccManagement{
+public class AccountManagement {
 
-    //showAccounts - prints out account names and balances
     public String showMyAccounts(CustomerID customer) {
         return (NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString();
     }
-    //newAccount - creates new account
     public String newAccount(CustomerID customer, NewBankClientHandler newBankClientHandler){
 
         boolean valid = false;
         String newAccountName = "";
         newBankClientHandler.sendOutput("Selected: Create new account");
 
-        while (valid == false) {
+        while (!valid) {
 
             //ask for account name
             newBankClientHandler.sendOutput("Please enter new account name ('q' to quit):");
             newAccountName = newBankClientHandler.getInput();
 
             //if user quits
-            if (checkQuitInput(newAccountName)){return "MENU";}
+            if (checkQuitInput(newAccountName)){
+                return "MENU";
+            }
 
             //if account name is blank, loop
             if (newAccountName.trim().length()==0 || newAccountName.length() ==0){
@@ -41,10 +41,7 @@ public class AccManagement{
     }
 
     private boolean checkQuitInput(String s){
-        if (s.equalsIgnoreCase("Q")){
-            return true;
-        }
-        return false;
+        return s.equalsIgnoreCase("Q");
     }
 
 }

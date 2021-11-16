@@ -25,6 +25,7 @@ public class TestClient {
         resp = in.readLine();
         return resp;
     }
+
     //Creates second account under customer John
     public void secondAccount() throws IOException {
         out.println("2");
@@ -33,17 +34,20 @@ public class TestClient {
         out.println("new");
         return;
     }
+
     //sends a message, and reads single line reply
     public String sendMessage(String msg) throws IOException {
         out.println(msg);
         String resp = in.readLine();
         return resp;
     }
+
     //reads single line reply
     public String readMessage() throws IOException {
         String resp = in.readLine();
         return resp;
     }
+
     //ends connection
     public void stopConnection() throws IOException {
         in.close();

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class AccManagementTest {
+public class AccountManagementTest {
     TestClient client = new TestClient();
 
     @Before
@@ -26,8 +26,7 @@ public class AccManagementTest {
     }
 
     @Test
-    //Test1 - test showAccounts`
-    public void test1() throws IOException {
+    public void showAccounts_returns_validResponse() throws IOException {
         String response = client.sendMessage("1");
 
         String expectedOutput = "Checking: 250.0";
@@ -35,8 +34,7 @@ public class AccManagementTest {
     }
 
     @Test
-    //Test 2 - test newAccount(), with name "new"
-    public void test2() throws IOException {
+    public void newAccount_returns_validResponse() throws IOException {
         client.sendMessage("2");
         client.readMessage();
         String response = client.sendMessage("new");
@@ -46,8 +44,7 @@ public class AccManagementTest {
     }
 
     @Test
-    //Test 3 - test existing account fail
-    public void test3() throws IOException {
+    public void newAccount_existingAccountName_returns_failResponse() throws IOException {
         client.sendMessage("2");
         client.readMessage();
         String response = client.sendMessage("Checking");
@@ -57,8 +54,7 @@ public class AccManagementTest {
     }
 
     @Test
-    //Test 4 - test blank account name
-    public void test4() throws IOException {
+    public void newAccount_blankName_returns_failResponse() throws IOException {
         client.sendMessage("2");
         client.readMessage();
         String response = client.sendMessage("");
@@ -68,8 +64,7 @@ public class AccManagementTest {
     }
 
     @Test
-    //Test 5 - test blank account name
-    public void test5() throws IOException {
+    public void showAccounts_twoAccounts_returns_validResponse() throws IOException {
         String response1 = client.sendMessage("1");
         String response2 = client.readMessage();
 

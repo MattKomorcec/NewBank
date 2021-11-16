@@ -26,11 +26,10 @@ public class TransactionTest {
     }
 
     @Test
-    //Test1 - tests moving 100.0 from Checking to new account (user John)
-    public void test1() throws IOException {
+    public void moveFunds_checkingToNew_returns_validResponse() throws IOException {
         //starts by creating second account
         client.secondAccount();
-        String response = client.sendMessage("3");
+        client.sendMessage("3");
         client.readMessage();
         client.readMessage();
         String response1 = client.sendMessage("100.0");
@@ -56,8 +55,7 @@ public class TransactionTest {
     }
 
     @Test
-    //Test1 - test paying 100.0 from (John) Checking to (Bhagy) Main
-    public void test2() throws IOException {
+    public void payFunds_fromJohnToBhagy_returns_validResponse() throws IOException {
         client.sendMessage("4");
         client.readMessage();
         String response1 = client.sendMessage("100.0");
@@ -86,6 +84,4 @@ public class TransactionTest {
         assertEquals(expectedOutput3, response3);
         assertEquals(expectedOutput4, response4);
     }
-
-
 }
