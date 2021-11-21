@@ -4,15 +4,19 @@ import java.util.ArrayList;
 
 public class Customer {
 
-	private ArrayList<Account> accounts;
+	private ArrayList<newbank.server.Account> accounts;
+	String username;
+	String password;
 
-	public Customer() {
+	public Customer(String username, String password) {
 		accounts = new ArrayList<>();
+		this.username = username;
+		this.password = password;
 	}
 
 	public String accountsToString() {
 		String s = "";
-		for (Account a : accounts) {
+		for (newbank.server.Account a : accounts) {
 			s += a.toString();
 			//add new line if more than one account
 			if (accounts.size() > 1) {
@@ -22,16 +26,16 @@ public class Customer {
 		return s;
 	}
 
-	public void addAccount(Account account) {
+	public void addAccount(newbank.server.Account account) {
 		accounts.add(account);
 	}
 
-	public ArrayList<Account> getAccounts() {
+	public ArrayList<newbank.server.Account> getAccounts() {
 		return accounts;
 	}
 
 	public boolean checkExistingAccount(String accountName) {
-		for (Account a : accounts) {
+		for (newbank.server.Account a : accounts) {
 			if (a.getAccountName().equals(accountName)) {
 				return true;
 			}
@@ -39,8 +43,8 @@ public class Customer {
 		return false;
 	}
 
-	public Account getExistingAccount(String accountName) {
-		for (Account a : accounts) {
+	public newbank.server.Account getExistingAccount(String accountName) {
+		for (newbank.server.Account a : accounts) {
 			if (a.getAccountName().equals(accountName)) {
 				return a;
 			}
@@ -48,4 +52,11 @@ public class Customer {
 		return null;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
 }

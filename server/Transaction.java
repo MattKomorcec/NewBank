@@ -6,186 +6,168 @@ public class Transaction {
     String confirmation = "";
     double amount = 0.0;
     boolean valid = false;
-    Account fromAccount;
-    Account toAccount;
-    Customer toCustomer;
+    newbank.server.Account fromAccount;
+    newbank.server.Account toAccount;
+    newbank.server.Customer toCustomer;
 
-    //move funds between personal accounts
-    public String moveFunds(CustomerID customer, NewBankClientHandler newBankClientHandler) {
+    // Moving funds between personal accounts.
+    public String moveFunds(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Move funds between your accounts");
-        //gets user to input amount to transfer
+        // gets user to input amount to transfer
         amount = getAmount(newBankClientHandler);
         //if user quit
         if (amount == -1) {
             return "MENU";
         }
-
-        //gets user to input account to transfer from
+        // Getting user to input account to transfer from.
         newBankClientHandler.sendOutput("Please enter name of account to transfer funds from ('q' to quit):");
         fromAccount = getMyAccount(customer, newBankClientHandler);
-        //if user quit
+        // Checking if user quit.
         if (fromAccount == null) {
             return "MENU";
         }
-
-        //gets user to input account to transfer to
+        // Getting user input account to transfer to.
         newBankClientHandler.sendOutput("Please enter name of account to transfer funds to ('q' to quit):");
         toAccount = getMyAccount(customer, newBankClientHandler);
         //if user quit
         if (toAccount == null) {
             return "MENU";
         }
-
-        //checks if funds not sufficient, if so then exits
+        // Checks if funds not sufficient, if so then exits
         if (!checkSufficientFunds(amount, fromAccount)) {
             newBankClientHandler.sendOutput("Insufficient funds, exiting to main menu");
             return "FAIL";
         }
-
-        //confirm transaction
+        // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s",
                 amount, fromAccount.getAccountName(), toAccount.getAccountName());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to menu:");
         if (!getYN(newBankClientHandler)) {
             return "MENU";
         }
-
-        //completes transfer
+        // Completing transfer.
         transferFunds(amount, fromAccount, toAccount);
-
-        //prints accounts and balance
-        newBankClientHandler.sendOutput((NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString());
-
+        // Printing accounts and balance.
+        newBankClientHandler.sendOutput(customer.accountsToString());
         return "SUCCESS";
     }
 
-    public String payFunds(CustomerID customer, NewBankClientHandler newBankClientHandler) {
+    public String payFunds(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Make payment");
-        //gets user to input transfer amount
+        // Getting user's input transfer amount.
         amount = getAmount(newBankClientHandler);
-        //if user quit
+        // Checking if user quits
         if (amount == -1) {
             return "MENU";
         }
-
-        //gets user to input account to transfer from
+        // Getting user's input account to transfer from.
         newBankClientHandler.sendOutput("Please enter name of your account to transfer funds from ('q' to quit):");
         fromAccount = getMyAccount(customer, newBankClientHandler);
         //if user quit
         if (fromAccount == null) {
             return "MENU";
         }
-
-        //gets user to input customer to transfer to
+        // Getting user's input customer to transfer to.
         newBankClientHandler.sendOutput("Please enter name of payee ('q' to quit):");
         toCustomer = getToCustomer(customer, newBankClientHandler);
-        //if user quit
+        // Checking if user quits
         if (toCustomer == null) {
             return "MENU";
         }
-
-        //gets user to input customer account
+        // Getting user's to input customer account.
         newBankClientHandler.sendOutput("Please enter name of payee's account ('q' to quit):");
         toAccount = getToCustomerAccount(newBankClientHandler);
-        //if user quit
+        //Checking if user quits.
         if (toAccount == null) {
             return "MENU";
         }
-
-        //checks if funds not sufficient, if so then exits
+        // Checking if funds are sufficient - if so then exits.
         if (!checkSufficientFunds(amount, fromAccount)) {
             newBankClientHandler.sendOutput("Insufficient funds, exiting to main menu");
             return "FAIL";
         }
-
-        //confirm transaction
+        // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s %s",
                 amount, fromAccount.getAccountName(),
-                NewBank.getBank().getID(toCustomer), toAccount.getAccountName());
+                newbank.server.NewBank.getBank().getID(toCustomer), toAccount.getAccountName());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to menu:");
         if (!getYN(newBankClientHandler)) {
             return "MENU";
         }
-
         transferFunds(amount, fromAccount, toAccount);
-
-        //prints the updated fromAccount balance
+        // Printing the updated fromAccount balance.
         newBankClientHandler.sendOutput("New account balance:");
-        newBankClientHandler.sendOutput((NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString());
-
+        newBankClientHandler.sendOutput(customer.accountsToString());
         return "SUCCESS";
     }
 
-    //gets user input for transfer
-    private double getAmount(NewBankClientHandler newBankClientHandler) {
+    // Getting user input for transfer.
+    private double getAmount(newbank.server.NewBankClientHandler newBankClientHandler) {
         valid = false;
-
         while (!valid) {
-            //asks for amount
+            // Asking for amount.
             newBankClientHandler.sendOutput("Please enter amount to be transferred ('q' to quit):");
             input = newBankClientHandler.getInput();
-            //check if quit
+            // Checking if quit.
             if (checkQuitInput(input)) {
                 return -1;
             }
-            //checks if type double
+            // Checking if type double.
             if (checkDouble(input)) {
-                //checks if negative
+                // Checking if negative.
                 if (checkNegative(Double.parseDouble(input))) {
                     newBankClientHandler.sendOutput("Invalid negative input, please try again:");
                 } else {
-                    //if type double and non-negative, returns the input as type double
+                    // Returning the input as type double if type double and non-negative.
                     return Double.parseDouble(input);
                 }
             } else {
-                //invalid input, loops
+                // Looping for invalid input.
                 newBankClientHandler.sendOutput("Invalid input, please try again:");
             }
         }
         return 0.0;
     }
 
-    private Account getMyAccount(CustomerID customer, NewBankClientHandler newBankClientHandler) {
+    private newbank.server.Account getMyAccount(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
         String input;
         valid = false;
-
         while (!valid) {
-            //asks for account name
+            // Asking for account name.
             input = newBankClientHandler.getInput();
-            //check if quit
+            // Checking if quit.
             if (checkQuitInput(input)) {
                 return null;
             }
-
-            //checks if account exists, if it does then returns the Account Object
-            //Otherwise, error message and loops
-            if (NewBank.getBank().getCustomers().get(customer.getKey()).checkExistingAccount(input)) {
+            // Checking if account exists - if so returning the Account Object.
+            // Otherwise, error message and loops.
+            if (customer.checkExistingAccount(input)) {
                 valid = true;
-                return NewBank.getBank().getCustomers().get(customer.getKey()).getExistingAccount(input);
-            } else {
+                return customer.getExistingAccount(input);
+            }
+            else {
                 newBankClientHandler.sendOutput("Invalid input, please try again:");
             }
         }
         return null;
     }
 
-    private Customer getToCustomer(CustomerID customer, NewBankClientHandler newBankClientHandler) {
+    private newbank.server.Customer getToCustomer(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
         String input;
-        Customer payee;
+        newbank.server.Customer payee;
         valid = false;
         while (!valid) {
-            //asks for customer name
+            // Asking for customer name.
             input = newBankClientHandler.getInput();
-            //check if quit
+            // Checking if quit.
             if (checkQuitInput(input)) {
                 return null;
             }
-
-            //checks if customer exists, if does returns Customer Object
-            //else loops
-            if (NewBank.getBank().getCustomers().containsKey(input)) {
+            // Checking if customer exists - if so returning Customer Object
+            // Else loops.
+            if (newbank.server.NewBank.getBank().getCustomers().containsKey(input)) {
                 valid = true;
-                payee = NewBank.getBank().getCustomers().get(input);
+                payee = newbank.server.NewBank.getBank().getCustomers().get(input);
                 return payee;
             } else {
                 newBankClientHandler.sendOutput("No customer found, please try again:");
@@ -194,68 +176,66 @@ public class Transaction {
         return null;
     }
 
-    private Account getToCustomerAccount(NewBankClientHandler newBankClientHandler) {
+    private newbank.server.Account getToCustomerAccount(newbank.server.NewBankClientHandler newBankClientHandler) {
         String input;
         valid = false;
-
         while (!valid) {
-            //asks for payee account input
+            // Asking for payee account input.
             input = newBankClientHandler.getInput();
-            //check if quit
+            // Checking if quit.
             if (checkQuitInput(input)) {
                 return null;
             }
-
-            //if account exists, returns the Account Object
-            //else error message and loops
+            // if account exists, returns the Account Object.
+            // Else error message and loops.
             if (toCustomer.checkExistingAccount(input)) {
                 valid = true;
                 return toCustomer.getExistingAccount(input);
-            } else {
+            }
+            else {
                 newBankClientHandler.sendOutput("Invalid input, please try again:");
             }
         }
         return null;
     }
 
-    //
-    public void transferFunds(double amount, Account fromAccount, Account toAccount) {
-        //subtracts amount from the 'from' account
+    public void transferFunds(double amount, newbank.server.Account fromAccount, newbank.server.Account toAccount) {
+        // Subtracting amount from the 'from' account.
         double fromBalance = fromAccount.getBalance();
         fromAccount.setBalance(fromBalance - amount);
-        //add amount to the 'to' account
+        // Adding amount to the 'to' account.
         double toBalance = toAccount.getBalance();
         toAccount.setBalance(toBalance + amount);
     }
 
     private boolean checkDouble(String s) {
-
-        //tests if input string is of double format
+        // Checking if input string is of double format.
         try {
             Double.parseDouble(s);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return false;
         }
         return true;
     }
 
-    //if sufficient funds, return true else false
-    private boolean checkSufficientFunds(double amount, Account fromAccount) {
+    // Returning true if there are sufficient funds, else false.
+    private boolean checkSufficientFunds(double amount, newbank.server.Account fromAccount) {
         return !((fromAccount.getBalance() - amount) < 0);
     }
 
-    //if argument is negative return true
+    // Returning true if argument is negative.
     private boolean checkNegative(double d) {
         return d < 0;
     }
 
-    //check if user inputs 'q'
+    // Checking if user inputs 'q'.
     private boolean checkQuitInput(String s) {
         return s.equalsIgnoreCase("q");
     }
 
-    //get input and if 'Y' or 'y' returns true, otherwise returns false
-    private boolean getYN(NewBankClientHandler newBankClientHandler) {
+    // Getting input - if 'Y' or 'y' returns true, otherwise returns false
+    private boolean getYN(newbank.server.NewBankClientHandler newBankClientHandler) {
         //asks for input
         input = newBankClientHandler.getInput();
         return input.equalsIgnoreCase("y");

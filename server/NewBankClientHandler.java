@@ -8,56 +8,84 @@ import java.net.Socket;
 
 public class NewBankClientHandler extends Thread {
 
-	private NewBank bank;
+	private newbank.server.NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
 
 	public NewBankClientHandler(Socket s) throws IOException {
-		bank = NewBank.getBank();
+		bank = newbank.server.NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
 
 	public void run() {
-		// keep getting requests from the client and processing them
+		out.println("+------------------------------------+");
+		out.println("|Welcome to NewBank                  |");
 		try {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customer = bank.checkLogInDetails(userName, password);
-			// if the user is authenticated then get requests from the user and process them
-			if (customer != null) {
-				out.println("Log In Successful. What do you want to do?");
-				while (true) {
-					String request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-
-					//*** added pass newBankClientHandler Object into processRequest so it can call methods
-					String response = bank.processRequest(customer, request, this);
-					out.println(response);
+			while (true) {
+				out.println("+------------------------------------+");
+				out.println("|NewBank - Initial Menu              |");
+				out.println("+------------------------------------+");
+				out.println("|(1) - Login as existing customer    |");
+				out.println("|(2) - Register for a new account    |");
+				out.println("+------------------------------------+");
+				switch (in.readLine()) {
+					case "1":
+						// Ask for username
+						out.println("Enter Username:");
+						String userName = in.readLine();
+						// Ask for password
+						out.println("Enter Password:");
+						String password = in.readLine();
+						out.println("\nChecking Details...");
+						// Authenticate user and get customer ID token from bank for use in subsequent requests.
+						newbank.server.Customer customer = bank.checkLogInDetails(userName, password, this);
+						// If the user is authenticated then get requests from the user and process them.
+						if (customer != null) {
+							out.println("\nLoading...\n");
+							out.println("Log In Successful.\n");
+							out.println("Welcome to your NewBank account " + customer.getUsername()+".");
+							out.println("\n+---------------------------------------------------+");
+							out.println("|NewBank - Customer Menu                            |");
+							out.println("+---------------------------------------------------+");
+							out.println("|(1) - Show existing accounts and current balance   |");
+							out.println("|(2) - Create a new account with zero opening funds |");
+							out.println("|(3) - Move funds between your existing accounts    |");
+							out.println("|(4) - Pay an existing NewBank customer             |");
+							out.println("+---------------------------------------------------+");
+							while (true) {
+								String request = in.readLine();
+								System.out.println("Request from " + customer.getUsername());
+								// Added pass newBankClientHandler Object into processRequest, so it can call methods
+								String response = bank.processRequest(customer, request, this);
+								out.println(response);
+							}
+						} else {
+							out.println("Loading...\n");
+							out.println("Log In Failed.\n");
+						}
+						break;
+					case "2":
+						break;
 				}
-			} else {
-				out.println("Log In Failed");
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			try {
 				in.close();
 				out.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
 
-	//added getInput method, keeps input handling in NewBankClientHandler class
+	// Adding getInput method, keeps input handling in NewBankClientHandler class.
 	public String getInput() {
 
 		try {
@@ -69,7 +97,7 @@ public class NewBankClientHandler extends Thread {
 		return null;
 	}
 
-	//added sendOutput method, keeps input handling in NewBankClientHandler class
+	// Adding sendOutput method, keeps input handling in NewBankClientHandler class.
 	public void sendOutput(String s) {
 		try {
 			out.println(s);

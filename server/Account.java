@@ -19,12 +19,12 @@ public class Account {
 		return accountName;
 	}
 
-	//add getter for opening balance
+	// Adding getter for opening balance.
 	public double getBalance() {
 		return balance;
 	}
 
-	//add setter for opening balance
+	// Adding setter for opening balance.
 	public void setBalance(double d) {
 		balance = d;
 	}
