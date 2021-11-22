@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Customer {
 
-	private ArrayList<newbank.server.Account> accounts;
+	private ArrayList<Account> accounts;
 	String username;
 	String password;
 
@@ -16,7 +16,7 @@ public class Customer {
 
 	public String accountsToString() {
 		String s = "";
-		for (newbank.server.Account a : accounts) {
+		for (Account a : accounts) {
 			s += a.toString();
 			//add new line if more than one account
 			if (accounts.size() > 1) {
@@ -26,16 +26,16 @@ public class Customer {
 		return s;
 	}
 
-	public void addAccount(newbank.server.Account account) {
+	public void addAccount(Account account) {
 		accounts.add(account);
 	}
 
-	public ArrayList<newbank.server.Account> getAccounts() {
+	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
 
 	public boolean checkExistingAccount(String accountName) {
-		for (newbank.server.Account a : accounts) {
+		for (Account a : accounts) {
 			if (a.getAccountName().equals(accountName)) {
 				return true;
 			}
@@ -43,8 +43,8 @@ public class Customer {
 		return false;
 	}
 
-	public newbank.server.Account getExistingAccount(String accountName) {
-		for (newbank.server.Account a : accounts) {
+	public Account getExistingAccount(String accountName) {
+		for (Account a : accounts) {
 			if (a.getAccountName().equals(accountName)) {
 				return a;
 			}

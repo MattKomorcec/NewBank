@@ -37,7 +37,7 @@ public class AccountManagement {
             }
         }
         //creates new account, defaults to balance of 0.0
-        customer.addAccount(new newbank.server.Account(newAccountName, 0.0));
+        customer.addAccount(new Account(newAccountName, 0.0));
         return "SUCCESS";
     }
 

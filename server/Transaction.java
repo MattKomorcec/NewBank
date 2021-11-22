@@ -6,12 +6,12 @@ public class Transaction {
     String confirmation = "";
     double amount = 0.0;
     boolean valid = false;
-    newbank.server.Account fromAccount;
-    newbank.server.Account toAccount;
-    newbank.server.Customer toCustomer;
+    Account fromAccount;
+    Account toAccount;
+    Customer toCustomer;
 
     // Moving funds between personal accounts.
-    public String moveFunds(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
+    public String moveFunds(Customer customer, NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Move funds between your accounts");
         // gets user to input amount to transfer
         amount = getAmount(newBankClientHandler);
@@ -52,7 +52,7 @@ public class Transaction {
         return "SUCCESS";
     }
 
-    public String payFunds(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
+    public String payFunds(Customer customer, NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Make payment");
         // Getting user's input transfer amount.
         amount = getAmount(newBankClientHandler);
@@ -89,7 +89,7 @@ public class Transaction {
         // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s %s",
                 amount, fromAccount.getAccountName(),
-                newbank.server.NewBank.getBank().getID(toCustomer), toAccount.getAccountName());
+                NewBank.getBank().getID(toCustomer), toAccount.getAccountName());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to menu:");
         if (!getYN(newBankClientHandler)) {
             return "MENU";
@@ -102,7 +102,7 @@ public class Transaction {
     }
 
     // Getting user input for transfer.
-    private double getAmount(newbank.server.NewBankClientHandler newBankClientHandler) {
+    private double getAmount(NewBankClientHandler newBankClientHandler) {
         valid = false;
         while (!valid) {
             // Asking for amount.
@@ -129,7 +129,7 @@ public class Transaction {
         return 0.0;
     }
 
-    private newbank.server.Account getMyAccount(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
+    private Account getMyAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
         String input;
         valid = false;
         while (!valid) {
@@ -152,9 +152,9 @@ public class Transaction {
         return null;
     }
 
-    private newbank.server.Customer getToCustomer(newbank.server.Customer customer, newbank.server.NewBankClientHandler newBankClientHandler) {
+    private Customer getToCustomer(Customer customer,NewBankClientHandler newBankClientHandler) {
         String input;
-        newbank.server.Customer payee;
+        Customer payee;
         valid = false;
         while (!valid) {
             // Asking for customer name.
@@ -165,9 +165,9 @@ public class Transaction {
             }
             // Checking if customer exists - if so returning Customer Object
             // Else loops.
-            if (newbank.server.NewBank.getBank().getCustomers().containsKey(input)) {
+            if (NewBank.getBank().getCustomers().containsKey(input)) {
                 valid = true;
-                payee = newbank.server.NewBank.getBank().getCustomers().get(input);
+                payee = NewBank.getBank().getCustomers().get(input);
                 return payee;
             } else {
                 newBankClientHandler.sendOutput("No customer found, please try again:");
@@ -176,7 +176,7 @@ public class Transaction {
         return null;
     }
 
-    private newbank.server.Account getToCustomerAccount(newbank.server.NewBankClientHandler newBankClientHandler) {
+    private Account getToCustomerAccount(NewBankClientHandler newBankClientHandler) {
         String input;
         valid = false;
         while (!valid) {
@@ -199,7 +199,7 @@ public class Transaction {
         return null;
     }
 
-    public void transferFunds(double amount, newbank.server.Account fromAccount, newbank.server.Account toAccount) {
+    public void transferFunds(double amount, Account fromAccount, Account toAccount) {
         // Subtracting amount from the 'from' account.
         double fromBalance = fromAccount.getBalance();
         fromAccount.setBalance(fromBalance - amount);
@@ -220,7 +220,7 @@ public class Transaction {
     }
 
     // Returning true if there are sufficient funds, else false.
-    private boolean checkSufficientFunds(double amount, newbank.server.Account fromAccount) {
+    private boolean checkSufficientFunds(double amount, Account fromAccount) {
         return !((fromAccount.getBalance() - amount) < 0);
     }
 
@@ -235,7 +235,7 @@ public class Transaction {
     }
 
     // Getting input - if 'Y' or 'y' returns true, otherwise returns false
-    private boolean getYN(newbank.server.NewBankClientHandler newBankClientHandler) {
+    private boolean getYN(NewBankClientHandler newBankClientHandler) {
         //asks for input
         input = newBankClientHandler.getInput();
         return input.equalsIgnoreCase("y");

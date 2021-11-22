@@ -8,12 +8,12 @@ import java.net.Socket;
 
 public class NewBankClientHandler extends Thread {
 
-	private newbank.server.NewBank bank;
+	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
 
 	public NewBankClientHandler(Socket s) throws IOException {
-		bank = newbank.server.NewBank.getBank();
+		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
@@ -39,7 +39,7 @@ public class NewBankClientHandler extends Thread {
 						String password = in.readLine();
 						out.println("\nChecking Details...");
 						// Authenticate user and get customer ID token from bank for use in subsequent requests.
-						newbank.server.Customer customer = bank.checkLogInDetails(userName, password, this);
+						Customer customer = bank.checkLogInDetails(userName, password, this);
 						// If the user is authenticated then get requests from the user and process them.
 						if (customer != null) {
 							out.println("\nLoading...\n");

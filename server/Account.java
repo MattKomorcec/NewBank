@@ -14,17 +14,14 @@ public class Account {
 		return (accountName + ": " + balance);
 	}
 
-	//add getter for accountName
 	public String getAccountName() {
 		return accountName;
 	}
 
-	// Adding getter for opening balance.
 	public double getBalance() {
 		return balance;
 	}
 
-	// Adding setter for opening balance.
 	public void setBalance(double d) {
 		balance = d;
 	}

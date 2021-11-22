@@ -6,10 +6,10 @@ import java.util.Map.Entry;
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
-	private HashMap<String, newbank.server.Customer> customers;
+	private HashMap<String, Customer> customers;
 
 	//Initialising AccountManagement Object
-	private newbank.server.AccountManagement accountManagement = new newbank.server.AccountManagement();
+	private AccountManagement accountManagement = new AccountManagement();
 
 	// Initialising Transaction Object
 	private Transaction transaction = new Transaction();
@@ -20,16 +20,16 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		newbank.server.Customer bhagy = new newbank.server.Customer("Bhagy", "1234");
-		bhagy.addAccount(new newbank.server.Account("Main", 1000.0));
+		Customer bhagy = new Customer("Bhagy", "1234");
+		bhagy.addAccount(new Account("Main", 1000.0));
 		customers.put(bhagy.getUsername(), bhagy);
 
-		newbank.server.Customer christina = new newbank.server.Customer("Christina", "1234");
-		christina.addAccount(new newbank.server.Account("Savings", 1500.0));
+		Customer christina = new Customer("Christina", "1234");
+		christina.addAccount(new Account("Savings", 1500.0));
 		customers.put(christina.getUsername(), christina);
 
-		newbank.server.Customer john = new newbank.server.Customer("Johh","1234");
-		john.addAccount(new newbank.server.Account("Checking", 250.0));
+		Customer john = new Customer("Johh","1234");
+		john.addAccount(new Account("Checking", 250.0));
 		customers.put(john.getUsername(), john);
 	}
 
@@ -37,7 +37,7 @@ public class NewBank {
 		return bank;
 	}
 
-	public synchronized newbank.server.Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
+	public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
 		if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
 			newBankClientHandler.sendOutput("-Username correct");
 			newBankClientHandler.sendOutput("-Password correct");
@@ -57,7 +57,7 @@ public class NewBank {
 	}
 
 	// Commands from the NewBank customer are processed in this method.
-	public synchronized String processRequest(newbank.server.Customer customer, String request, NewBankClientHandler newBankClientHandler) {
+	public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
 		if (customers.containsKey(customer.getUsername())) {
 			switch (request) {
 				case "1":
@@ -75,12 +75,12 @@ public class NewBank {
 		return "FAIL";
 	}
 
-	public HashMap<String, newbank.server.Customer> getCustomers() {
+	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
 
-	public String getID(newbank.server.Customer c) {
-		for (Entry<String, newbank.server.Customer> entry : customers.entrySet()) {
+	public String getID(Customer c) {
+		for (Entry<String, Customer> entry : customers.entrySet()) {
 			if (entry.getValue().equals(c)) {
 				return entry.getKey();
 			}
