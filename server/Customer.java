@@ -5,9 +5,13 @@ import java.util.ArrayList;
 public class Customer {
 
 	private ArrayList<Account> accounts;
+	String username;
+	String password;
 
-	public Customer() {
+	public Customer(String username, String password) {
 		accounts = new ArrayList<>();
+		this.username = username;
+		this.password = password;
 	}
 
 	public String accountsToString() {
@@ -48,4 +52,11 @@ public class Customer {
 		return null;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
 }

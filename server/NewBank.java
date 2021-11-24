@@ -8,9 +8,10 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
 
-	//initialised AccManagement Object
+	//Initialising AccountManagement Object
 	private AccountManagement accountManagement = new AccountManagement();
-	//initialised Transaction Object
+
+	// Initialising Transaction Object
 	private Transaction transaction = new Transaction();
 
 	private NewBank() {
@@ -19,33 +20,45 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		Customer bhagy = new Customer();
+		Customer bhagy = new Customer("Bhagy", "1234");
 		bhagy.addAccount(new Account("Main", 1000.0));
-		customers.put("Bhagy", bhagy);
+		customers.put(bhagy.getUsername(), bhagy);
 
-		Customer christina = new Customer();
+		Customer christina = new Customer("Christina", "1234");
 		christina.addAccount(new Account("Savings", 1500.0));
-		customers.put("Christina", christina);
+		customers.put(christina.getUsername(), christina);
 
-		Customer john = new Customer();
+		Customer john = new Customer("Johh","1234");
 		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);
+		customers.put(john.getUsername(), john);
 	}
 
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if (customers.containsKey(userName)) {
-			return new CustomerID(userName);
+	public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
+		if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
+			newBankClientHandler.sendOutput("-Username correct");
+			newBankClientHandler.sendOutput("-Password correct");
+			return customers.get(username);
 		}
-		return null;
+		else if (!customers.containsKey(username)){
+			newBankClientHandler.sendOutput("-Wrong username\n");
+			return null;
+		}
+		else if (!customers.get(username).getPassword().equals(password)) {
+			newBankClientHandler.sendOutput("-Wrong password\n");
+			return null;
+		}
+		else {
+			return null;
+		}
 	}
 
-	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request, NewBankClientHandler newBankClientHandler) {
-		if (customers.containsKey(customer.getKey())) {
+	// Commands from the NewBank customer are processed in this method.
+	public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
+		if (customers.containsKey(customer.getUsername())) {
 			switch (request) {
 				case "1":
 					return accountManagement.showMyAccounts(customer);

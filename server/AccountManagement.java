@@ -2,10 +2,10 @@ package newbank.server;
 
 public class AccountManagement {
 
-    public String showMyAccounts(CustomerID customer) {
-        return (NewBank.getBank().getCustomers().get(customer.getKey())).accountsToString();
+    public String showMyAccounts(Customer customer) {
+        return customer.accountsToString();
     }
-    public String newAccount(CustomerID customer, NewBankClientHandler newBankClientHandler){
+    public String newAccount(Customer customer, NewBankClientHandler newBankClientHandler){
 
         boolean valid = false;
         String newAccountName = "";
@@ -29,14 +29,15 @@ public class AccountManagement {
             }
             //if account name already exists, error message and prompts new input,
             //else exit while loop
-            if (!NewBank.getBank().getCustomers().get(customer.getKey()).checkExistingAccount(newAccountName)){
+            if (!customer.checkExistingAccount(newAccountName)) {
                 valid = true;
-            }else{
+            }
+            else{
                 newBankClientHandler.sendOutput("Account name is taken, please try again.");
             }
         }
         //creates new account, defaults to balance of 0.0
-        NewBank.getBank().getCustomers().get(customer.getKey()).addAccount(new Account(newAccountName, 0.0));
+        customer.addAccount(new Account(newAccountName, 0.0));
         return "SUCCESS";
     }
 
