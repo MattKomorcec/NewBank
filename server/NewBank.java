@@ -68,6 +68,8 @@ public class NewBank {
 					return transaction.moveFunds(customer, newBankClientHandler);
 				case "4":
 					return transaction.payFunds(customer, newBankClientHandler);
+				case "5":
+					return accountManagement.removeAccount(customer,newBankClientHandler);
 				default:
 					return "FAIL";
 			}

@@ -101,7 +101,7 @@ public class Transaction {
     }
 
     // Getting user input for transfer.
-    private double getAmount(NewBankClientHandler newBankClientHandler) {
+    public double getAmount(NewBankClientHandler newBankClientHandler) {
         valid = false;
         while (!valid) {
             // Asking for amount.
@@ -128,7 +128,7 @@ public class Transaction {
         return 0.0;
     }
 
-    private Account getMyAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
+    public Account getMyAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
         String input;
         valid = false;
         while (!valid) {

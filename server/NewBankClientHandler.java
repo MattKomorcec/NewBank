@@ -52,6 +52,7 @@ public class NewBankClientHandler extends Thread {
 							out.println("|(2) - Create a new account with zero opening funds |");
 							out.println("|(3) - Move funds between your existing accounts    |");
 							out.println("|(4) - Pay an existing NewBank customer             |");
+							out.println("|(5) - Remove an existing account                   |");
 							out.println("+---------------------------------------------------+");
 							while (true) {
 								String request = in.readLine();

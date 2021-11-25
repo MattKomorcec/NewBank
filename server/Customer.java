@@ -29,6 +29,10 @@ public class Customer {
 		accounts.add(account);
 	}
 
+	public void removeAccount (Account account) {
+		accounts.remove(account);
+	}
+
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
