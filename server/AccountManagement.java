@@ -18,20 +18,20 @@ public class AccountManagement {
         // Checking if the user has already reached the maximum number (3) of accounts.
         existAccounts = customer.getAccounts();
         if (existAccounts.size() >= 3) {
-            newBankClientHandler.sendOutput("Maximum number of accounts reached.");
+            newBankClientHandler.sendOutput("Maximum number of accounts reached. Exiting to Customer Menu.");
             return showMyAccounts(customer);
         }
         while (valid) {
             // Asking for account type.
-            newBankClientHandler.sendOutput("Please select a new account type [MAIN, SAVINGS, INVESTMENTS] ('q' to quit):");
+            newBankClientHandler.sendOutput("Please select a new account type [MAIN, SAVINGS, INVESTMENTS] or 'Q' to quit:");
             newAccountType = newBankClientHandler.getInput();
             // Checking if  user input is "q".
             if (checkQuitInput(newAccountType)){
-                return "MENU";
+                return "Customer Menu";
             }
             // Checking if user input is blank.
             if (newAccountType.trim().length()==0 || newAccountType.length() ==0){
-                newBankClientHandler.sendOutput("An appropriate account type [MAIN, SAVINGS, INVESTMENTS] must be selected. Please try again.");
+                newBankClientHandler.sendOutput("An appropriate account type  must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
                 continue;
             }
             // Checking if the selected account type already exists.
@@ -53,14 +53,14 @@ public class AccountManagement {
                     valid = false;
                 }
                 else {
-                    newBankClientHandler.sendOutput("Please provide MAIN, SAVINGS or INVESTMENTS as your new account type.");
+                    newBankClientHandler.sendOutput("An appropriate account type  must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
                 }
             }
             else {
-                newBankClientHandler.sendOutput("The selected account type already exists. Please try again.");
+                newBankClientHandler.sendOutput("The selected account type already exists. Please try again:");
             }
         }
-        return "SUCCESS";
+        return "New account was successfully created. Exiting to Customer Menu.";
     }
 
     private boolean checkQuitInput(String s){
