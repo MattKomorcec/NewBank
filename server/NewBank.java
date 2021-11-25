@@ -64,10 +64,10 @@ public class NewBank {
 					return accountManagement.showMyAccounts(customer);
 				case "2":
 					return accountManagement.newAccount(customer, newBankClientHandler);
-				case "3":
-					return transaction.moveFunds(customer, newBankClientHandler);
-				case "4":
-					return transaction.payFunds(customer, newBankClientHandler);
+				//case "3":
+					//return transaction.moveFunds(customer, newBankClientHandler);
+				//case "4":
+					//return transaction.payFunds(customer, newBankClientHandler);
 				default:
 					return "FAIL";
 			}

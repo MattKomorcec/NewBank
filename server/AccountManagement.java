@@ -1,48 +1,69 @@
 package newbank.server;
 
+import java.util.ArrayList;
+
 public class AccountManagement {
 
     public String showMyAccounts(Customer customer) {
         return customer.accountsToString();
     }
+
     public String newAccount(Customer customer, NewBankClientHandler newBankClientHandler){
 
-        boolean valid = false;
-        String newAccountName = "";
+        boolean valid = true;
+        String newAccountType = "";
+        ArrayList<Account> existAccounts;
         newBankClientHandler.sendOutput("Selected: Create new account");
 
-        while (!valid) {
-
-            //ask for account name
-            newBankClientHandler.sendOutput("Please enter new account name ('q' to quit):");
-            newAccountName = newBankClientHandler.getInput();
-
-            //if user quits
-            if (checkQuitInput(newAccountName)){
+        // Checking if the user has already reached the maximum number (3) of accounts.
+        existAccounts = customer.getAccounts();
+        if (existAccounts.size() >= 3) {
+            newBankClientHandler.sendOutput("Maximum number of accounts reached.");
+            return showMyAccounts(customer);
+        }
+        while (valid) {
+            // Asking for account type.
+            newBankClientHandler.sendOutput("Please select a new account type [MAIN, SAVINGS, INVESTMENTS] ('q' to quit):");
+            newAccountType = newBankClientHandler.getInput();
+            // Checking if  user input is "q".
+            if (checkQuitInput(newAccountType)){
                 return "MENU";
             }
-
-            //if account name is blank, loop
-            if (newAccountName.trim().length()==0 || newAccountName.length() ==0){
-                newBankClientHandler.sendOutput("Account name must not be blank, please try again.");
+            // Checking if user input is blank.
+            if (newAccountType.trim().length()==0 || newAccountType.length() ==0){
+                newBankClientHandler.sendOutput("An appropriate account type [MAIN, SAVINGS, INVESTMENTS] must be selected. Please try again.");
                 continue;
             }
-            //if account name already exists, error message and prompts new input,
-            //else exit while loop
-            if (!customer.checkExistingAccount(newAccountName)) {
-                valid = true;
+            // Checking if the selected account type already exists.
+            if (!customer.checkExistingAccount(newAccountType)) {
+                Account.AccountType accountType;
+                if (newAccountType.equalsIgnoreCase(Account.AccountType.MAIN.toString())) {
+                    accountType = Account.AccountType.MAIN;
+                    customer.addAccount(new Account(accountType, 0.0));
+                    valid = false;
+                }
+                else if (newAccountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
+                    accountType = Account.AccountType.SAVINGS;
+                    customer.addAccount(new Account(accountType, 0.0));
+                    valid = false;
+                }
+                else if (newAccountType.equalsIgnoreCase(Account.AccountType.INVESTMENTS.toString())) {
+                    accountType = Account.AccountType.INVESTMENTS;
+                    customer.addAccount(new Account(accountType, 0.0));
+                    valid = false;
+                }
+                else {
+                    newBankClientHandler.sendOutput("Please provide MAIN, SAVINGS or INVESTMENTS as your new account type.");
+                }
             }
-            else{
-                newBankClientHandler.sendOutput("Account name is taken, please try again.");
+            else {
+                newBankClientHandler.sendOutput("The selected account type already exists. Please try again.");
             }
         }
-        //creates new account, defaults to balance of 0.0
-        customer.addAccount(new Account(newAccountName, 0.0));
         return "SUCCESS";
     }
 
     private boolean checkQuitInput(String s){
         return s.equalsIgnoreCase("Q");
     }
-
 }

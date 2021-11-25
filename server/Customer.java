@@ -18,7 +18,6 @@ public class Customer {
 		String s = "";
 		for (Account a : accounts) {
 			s += a.toString();
-			//add new line if more than one account
 			if (accounts.size() > 1) {
 				s += "\n";
 			}
@@ -34,18 +33,18 @@ public class Customer {
 		return accounts;
 	}
 
-	public boolean checkExistingAccount(String accountName) {
+	public boolean checkExistingAccount(String accountType) {
 		for (Account a : accounts) {
-			if (a.getAccountName().equals(accountName)) {
+			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public Account getExistingAccount(String accountName) {
+	public Account getExistingAccount(String accountType) {
 		for (Account a : accounts) {
-			if (a.getAccountName().equals(accountName)) {
+			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
 				return a;
 			}
 		}

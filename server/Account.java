@@ -14,7 +14,7 @@ public class Account {
 	}
 
 	public String toString() {
-		return (accountName + ": " + balance);
+		return (accountType + ": " + balance);
 	}
 
 	public String getAccountName() {
