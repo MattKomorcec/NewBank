@@ -13,9 +13,9 @@ public class Transaction {
     // Moving funds between personal accounts.
     public String moveFunds(Customer customer, NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Move funds between your accounts");
-        // gets user to input amount to transfer
+        // gets user to input amount to transfer.
         amount = getAmount(newBankClientHandler);
-        //if user quit
+        // if user quit.
         if (amount == -1) {
             return "MENU";
         }
@@ -40,7 +40,7 @@ public class Transaction {
         }
         // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s",
-                amount, fromAccount.getAccountName(), toAccount.getAccountName());
+                amount, fromAccount.getAccountType(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to menu:");
         if (!getYN(newBankClientHandler)) {
             return "MENU";
@@ -48,8 +48,8 @@ public class Transaction {
         // Completing transfer.
         transferFunds(amount, fromAccount, toAccount);
         // Printing accounts and balance.
-        newBankClientHandler.sendOutput(customer.accountsToString());
-        return "SUCCESS";
+        newBankClientHandler.sendOutput("SUCCESS");
+        return customer.accountsToString();
     }
 
     public String payFunds(Customer customer, NewBankClientHandler newBankClientHandler) {
@@ -88,17 +88,17 @@ public class Transaction {
         }
         // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s %s",
-                amount, fromAccount.getAccountName(),
-                NewBank.getBank().getID(toCustomer), toAccount.getAccountName());
+                amount, fromAccount.getAccountType(),
+                NewBank.getBank().getID(toCustomer), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to menu:");
         if (!getYN(newBankClientHandler)) {
             return "MENU";
         }
         transferFunds(amount, fromAccount, toAccount);
         // Printing the updated fromAccount balance.
+        newBankClientHandler.sendOutput("SUCCESS");
         newBankClientHandler.sendOutput("New account balance:");
-        newBankClientHandler.sendOutput(customer.accountsToString());
-        return "SUCCESS";
+        return customer.accountsToString();
     }
 
     // Getting user input for transfer.
