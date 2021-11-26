@@ -17,39 +17,45 @@ public class Transaction {
         amount = getAmount(newBankClientHandler);
         // if user quit.
         if (amount == -1) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Getting user to input account to transfer from.
         newBankClientHandler.sendOutput("Please enter name of account to transfer funds from or 'Q' to quit:");
         fromAccount = getMyAccount(customer, newBankClientHandler);
         // Checking if user quit.
         if (fromAccount == null) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Getting user input account to transfer to.
         newBankClientHandler.sendOutput("Please enter name of account to transfer funds to or 'Q' to quit:");
         toAccount = getMyAccount(customer, newBankClientHandler);
         //if user quit
         if (toAccount == null) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Checks if funds not sufficient, if so then exits
         if (!checkSufficientFunds(amount, fromAccount)) {
-            return "Insufficient funds. Exiting to Customer Menu.";
+            newBankClientHandler.sendOutput("Insufficient funds. Exiting to Customer Menu.");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s",
                 amount, fromAccount.getAccountType(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
         if (!getYN(newBankClientHandler)) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Completing transfer.
         transferFunds(amount, fromAccount, toAccount);
         // Printing accounts and balance.
-        newBankClientHandler.sendOutput("Transfer was successful.");
-        newBankClientHandler.sendOutput("New accounts' statement:");
-        return customer.accountsToString();
+        newBankClientHandler.sendOutput("Transfer was successful. New accounts' statement:");
+        newBankClientHandler.sendOutput(customer.accountsToString());
+        newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+        return newBankClientHandler.printCustomerMenu();
     }
 
     public String payFunds(Customer customer, NewBankClientHandler newBankClientHandler) {
@@ -58,32 +64,37 @@ public class Transaction {
         amount = getAmount(newBankClientHandler);
         // Checking if user quits
         if (amount == -1) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Getting user's input account to transfer from.
         newBankClientHandler.sendOutput("Please enter name of your account to transfer funds from or 'Q' to quit:");
         fromAccount = getMyAccount(customer, newBankClientHandler);
         //if user quit
         if (fromAccount == null) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Getting user's input customer to transfer to.
         newBankClientHandler.sendOutput("Please enter name of payee or 'Q' to quit:");
         toCustomer = getToCustomer(customer, newBankClientHandler);
         // Checking if user quits
         if (toCustomer == null) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Getting user's to input customer account.
         newBankClientHandler.sendOutput("Please enter name of payee's account or 'Q' to quit:");
         toAccount = getToCustomerAccount(newBankClientHandler);
         //Checking if user quits.
         if (toAccount == null) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Checking if funds are sufficient - if so then exits.
         if (!checkSufficientFunds(amount, fromAccount)) {
-            return "Insufficient funds. Exiting to Customer Menu.";
+            newBankClientHandler.sendOutput("Insufficient funds. Exiting to Customer Menu.");
+            return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
         confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s %s",
@@ -91,13 +102,15 @@ public class Transaction {
                 NewBank.getBank().getID(toCustomer), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
         if (!getYN(newBankClientHandler)) {
-            return "Customer Menu";
+            newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+            return newBankClientHandler.printCustomerMenu();
         }
         transferFunds(amount, fromAccount, toAccount);
         // Printing the updated fromAccount balance.
-        newBankClientHandler.sendOutput("Payment was successful.");
-        newBankClientHandler.sendOutput("New accounts' statement:");
-        return customer.accountsToString();
+        newBankClientHandler.sendOutput("Payment was successful. New accounts' statement:");
+        newBankClientHandler.sendOutput(customer.accountsToString());
+        newBankClientHandler.sendOutput("\nExiting to Customer Menu");
+        return newBankClientHandler.printCustomerMenu();
     }
 
     // Getting user input for transfer.

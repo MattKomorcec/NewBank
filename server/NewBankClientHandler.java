@@ -21,14 +21,10 @@ public class NewBankClientHandler extends Thread {
 	public void run() {
 		out.println("+------------------------------------+");
 		out.println("|Welcome to NewBank                  |");
+		out.println("+------------------------------------+");
 		try {
 			while (true) {
-				out.println("+------------------------------------+");
-				out.println("|NewBank - Initial Menu              |");
-				out.println("+------------------------------------+");
-				out.println("|(1) - Login as existing customer    |");
-				out.println("|(2) - Register for a new account    |");
-				out.println("+------------------------------------+");
+				printInitialMenu();
 				switch (in.readLine()) {
 					case "1":
 						// Ask for username
@@ -45,15 +41,7 @@ public class NewBankClientHandler extends Thread {
 							out.println("\nLoading...\n");
 							out.println("Log In Successful.\n");
 							out.println("Welcome to your NewBank account " + customer.getUsername()+".");
-							out.println("\n+---------------------------------------------------+");
-							out.println("|NewBank - Customer Menu                            |");
-							out.println("+---------------------------------------------------+");
-							out.println("|(1) - Show existing accounts and current balance   |");
-							out.println("|(2) - Create a new account with zero opening funds |");
-							out.println("|(3) - Move funds between your existing accounts    |");
-							out.println("|(4) - Pay an existing NewBank customer             |");
-							out.println("|(5) - Remove an existing account                   |");
-							out.println("+---------------------------------------------------+");
+							printCustomerMenu();
 							while (true) {
 								String request = in.readLine();
 								System.out.println("Request from " + customer.getUsername());
@@ -105,5 +93,29 @@ public class NewBankClientHandler extends Thread {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// Printing Initial Menu.
+	public void printInitialMenu () {
+		out.println("+------------------------------------+");
+		out.println("|NewBank - Initial Menu              |");
+		out.println("+------------------------------------+");
+		out.println("|(1) - Login as existing customer    |");
+		out.println("|(2) - Register for a new account    |");
+		out.println("+------------------------------------+");
+	}
+
+	// Printing Customer Menu.
+	public String printCustomerMenu () {
+		out.println("\n+---------------------------------------------------+");
+		out.println("|NewBank - Customer Menu                            |");
+		out.println("+---------------------------------------------------+");
+		out.println("|(1) - Show existing accounts and current balance   |");
+		out.println("|(2) - Create a new account with zero opening funds |");
+		out.println("|(3) - Move funds between your existing accounts    |");
+		out.println("|(4) - Pay an existing NewBank customer             |");
+		out.println("|(5) - Remove an existing account                   |");
+		out.println("+---------------------------------------------------+");
+		return "\n";
 	}
 }

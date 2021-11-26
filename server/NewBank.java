@@ -61,7 +61,7 @@ public class NewBank {
 		if (customers.containsKey(customer.getUsername())) {
 			switch (request) {
 				case "1":
-					return accountManagement.showMyAccounts(customer);
+					return accountManagement.showMyAccounts(customer, newBankClientHandler);
 				case "2":
 					return accountManagement.newAccount(customer, newBankClientHandler);
 				case "3":
