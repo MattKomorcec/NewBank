@@ -30,7 +30,7 @@ public class UserRegistration extends Main {
 
 
         DateChecks dc = new DateChecks();
-        String userDoB = dc.GetDateFromUser();
+        String userDoB = String.valueOf(dc.GetDateFromUser());
 
 
         UserId ui = new UserId();
@@ -71,7 +71,7 @@ public class UserRegistration extends Main {
         Connection conn = null;
 
         try {
-            String url = "jdbc:sqlite:/Users/pmcdowell/Documents/nb/database/bank.sq3";
+            String url = "jdbc:sqlite:identifier.sqlite";
 
             conn = DriverManager.getConnection(url);
             // Will allow for the database connection.
@@ -125,6 +125,8 @@ public class UserRegistration extends Main {
             System.out.println(" ");
             System.out.println(" ");
 
+
+            System.out.println("\n Please ensure your terminal is fully open to ensure full user experience");
             System.out.print("\nPlease enter your first name: ");
             String newFirstName = sc.nextLine().toUpperCase();
 
@@ -158,17 +160,15 @@ public class UserRegistration extends Main {
     private static class DateChecks {
 
         Scanner sc = new Scanner(System.in);
-
         boolean IsItDate = false;
         String EnteredDate;
         String userdateresponse;
 
         public String GetDateFromUser() {
-
             do {
-                System.out.print("\nFor your date of birth please enter in the format of (DD/MM/YYYY) including /");
+                System.out.print("For your date of birth please enter in the format of (DD/MM/YYYY) including /");
                 System.out.println("\nDate of Birth: ");
-                String EnteredDate = sc.nextLine();
+                EnteredDate = sc.nextLine();
                 System.out.println("\nThe date of birth is set to:" + " " + EnteredDate);
                 IsItDate = IsDateValid(EnteredDate);
             } while (!IsItDate);
@@ -179,19 +179,16 @@ public class UserRegistration extends Main {
                 if (userdateresponse.equals("N")) {
                     System.out.print("\nPlease create a new Date of birth: ");
                     EnteredDate = sc.nextLine();
-
                     System.out.println("\nThe date of birth has been updated to:");
                     System.out.println("\nConfirm new date of birth(Y/N): " + " " + EnteredDate);
                     userdateresponse = sc.nextLine().toUpperCase();
-
                 }
-            } while (!userdateresponse.equals("Y"));
-
-
+                } while (!userdateresponse.equals("Y"));
             return EnteredDate;
+            }
         }
 
-        public boolean IsDateValid(String EnteredDate) {
+        public static boolean IsDateValid(String EnteredDate) {
 
             EnteredDate = EnteredDate + " 00:00:00";
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
@@ -206,7 +203,7 @@ public class UserRegistration extends Main {
             return IsUserEighteen(date);
         }
 
-        public boolean IsUserEighteen(Date dateToCheck) {
+        public static boolean IsUserEighteen(Date dateToCheck) {
 
             Calendar DoB = Calendar.getInstance();
             DoB.setTime(dateToCheck);
@@ -218,36 +215,27 @@ public class UserRegistration extends Main {
             }
             System.out.println("\nThe data entered means you are less than 18.");
             return false;
-
         }
-
     }
 
-    private static class UserId {
-
+    class UserId {
         Scanner sc = new Scanner(System.in);
         String userAns;
         String newUsername;
 
         public String getNewUserId() {
-
             do {
                 System.out.print("\nPlease create a new username: ");
                 newUsername = sc.nextLine();
                 System.out.println("\nIs the username correct(Y/N): " + " " + newUsername);
                 userAns = sc.nextLine().toUpperCase();
-
             } while (userAns.equals("N"));
             System.out.println("\n The username is set to:" + newUsername);
             return newUsername;
         }
-
     }
 
-
-    private static class newUserAccountNumber {
-
-
+    class newUserAccountNumber {
         public String getNewUserAccountNumber() {
             int min = 11121211;
             int max = 99879199;
@@ -255,27 +243,22 @@ public class UserRegistration extends Main {
             System.out.println(" ");
             System.out.println("\n The new account the account number and sortcode will be:");
             System.out.println("                 Account Number:" + " " + accountNumber);
-
             return String.valueOf(accountNumber);
         }
-
     }
 
-    private static class newUserSortcode {
-
+    class newUserSortcode {
         public String getNewUserSortCode() {
             int min = 111212;
             int max = 998791;
             int accountSortCode = (int) Math.floor(Math.random() * (max - min + 1) + min);
             System.out.println("                 Sortcode:" + " " + accountSortCode);
-
             return String.valueOf(accountSortCode);
         }
 
     }
 
-
-    private static class NewUserSecurity {
+    class NewUserSecurity {
 
         Scanner sc = new Scanner(System.in);
         String newPassword;
@@ -299,23 +282,20 @@ public class UserRegistration extends Main {
                     passwordChecks = false;
                 }
             } while (!passwordChecks);
-            System.out.println("\n Your new password is:" + " " + newPassword);
 
             do {
+                System.out.println("\n Your new password is:" + " " + newPassword);
                 System.out.println("\nConfirm password (Y/N): ");
                 userAnsPass = sc.nextLine().toUpperCase();
-                System.out.print("\nThe password must be (At least 8 letters long, contain a capital letter, a lowercase letter and numerical value)");
-                System.out.println("\nPlease create your new password: ");
-                newPassword = sc.nextLine();
-                if (!passwordLength(newPassword)) {
-                    passwordChecks = false;
+                if (userAnsPass.equals("N")) {
+                    System.out.println("\nThe password must be (At least 8 letters long, contain a capital letter, a lowercase letter and numerical value)");
+                    System.out.println("\nPlease create your new password: ");
+                    newPassword = sc.nextLine();
+                    System.out.println("Ok the password has now been updated:" + newPassword);
+                    System.out.println("\nConfirm new password(Y/N): ");
+                    userAnsPass = sc.nextLine().toUpperCase();
                 }
-                if (!passChecks(newPassword)) {
-                    passwordChecks = false;
-                }
-                System.out.println("\nConfirm new password(Y/N): " + " " + newPassword);
-                userAnsPass = sc.nextLine().toUpperCase();
-            } while (!passwordChecks && userAnsPass.equals("N"));
+            } while (!passwordChecks & userAnsPass.equals("N"));
 
             System.out.println("\n Your new password is:" + " " + newPassword);
             return newPassword;
@@ -326,6 +306,7 @@ public class UserRegistration extends Main {
             if (newPassword.length() > 7) {
                 return passChecks(newPassword);
             } else {
+                System.out.println(" ");
                 System.out.println("\nSorry the password" + " " + newPassword + " " + "does not meet the requirements");
                 return false;
             }
@@ -362,7 +343,7 @@ public class UserRegistration extends Main {
         }
     }
 
-    private static class NewUserBalance {
+    class NewUserBalance {
 
         Scanner sc = new Scanner(System.in);
         String userOpenBalance;
@@ -409,7 +390,7 @@ public class UserRegistration extends Main {
 
     }
 
-    private static class newUserSecretQuestion {
+     class newUserSecretQuestion {
         // set conditional
         String quesAns;
         Scanner sc = new Scanner(System.in);
@@ -439,7 +420,7 @@ public class UserRegistration extends Main {
         }
     }
 
-    private static class checkNotARobot {
+    class checkNotARobot {
         Integer answer;
         Integer userAnswer;
         Scanner sc = new Scanner(System.in);
@@ -463,5 +444,3 @@ public class UserRegistration extends Main {
         }
     }
 
-
-}
