@@ -1,10 +1,13 @@
 package newbank.server;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Account {
 
 	private String accountName;
 	enum AccountType {MAIN, SAVINGS, INVESTMENTS};
-	private final Account.AccountType accountType;
+	private final AccountType accountType;
 	private double balance;
 
 	public Account(AccountType accountType, double balance) {
@@ -13,10 +16,10 @@ public class Account {
 	}
 
 	public String toString() {
-		return (accountType + ": " + balance);
+		return (accountType + " : £"+balance);
 	}
 
-	public Account.AccountType getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 

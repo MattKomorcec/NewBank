@@ -15,7 +15,7 @@ public class AccountManagement {
 
     public String newAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
 
-        boolean valid = true;
+        boolean valid = false;
         String newAccountType = "";
         ArrayList<Account> existAccounts;
         newBankClientHandler.sendOutput("Selected: Create new account");
@@ -27,7 +27,7 @@ public class AccountManagement {
             newBankClientHandler.sendOutput(customer.accountsToString());
             return newBankClientHandler.printCustomerMenu();
         }
-        while (valid) {
+        while (!valid) {
             // Asking for account type.
             newBankClientHandler.sendOutput("Please select a new account type [MAIN, SAVINGS, INVESTMENTS] or 'Q' to quit:");
             newAccountType = newBankClientHandler.getInput();
@@ -47,17 +47,17 @@ public class AccountManagement {
                 if (newAccountType.equalsIgnoreCase(Account.AccountType.MAIN.toString())) {
                     accountType = Account.AccountType.MAIN;
                     customer.addAccount(new Account(accountType, 0.0));
-                    valid = false;
+                    valid = true;
                 }
                 else if (newAccountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
                     accountType = Account.AccountType.SAVINGS;
                     customer.addAccount(new Account(accountType, 0.0));
-                    valid = false;
+                    valid = true;
                 }
                 else if (newAccountType.equalsIgnoreCase(Account.AccountType.INVESTMENTS.toString())) {
                     accountType = Account.AccountType.INVESTMENTS;
                     customer.addAccount(new Account(accountType, 0.0));
-                    valid = false;
+                    valid = true;
                 }
                 else {
                     newBankClientHandler.sendOutput("An appropriate account type  must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");

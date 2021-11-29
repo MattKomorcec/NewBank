@@ -96,7 +96,7 @@ public class NewBankClientHandler extends Thread {
 	}
 
 	// Printing Initial Menu.
-	public void printInitialMenu () {
+	private void printInitialMenu () {
 		out.println("+------------------------------------+");
 		out.println("|NewBank - Initial Menu              |");
 		out.println("+------------------------------------+");
