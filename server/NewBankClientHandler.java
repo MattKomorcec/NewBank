@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 public class NewBankClientHandler extends Thread {
 
@@ -12,6 +15,8 @@ public class NewBankClientHandler extends Thread {
 	private BufferedReader in;
 	private PrintWriter out;
 	private int failedLogInCount = 0;
+	private ArrayList<String> failedLogInUsers = new ArrayList<>();
+
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
@@ -32,6 +37,13 @@ public class NewBankClientHandler extends Thread {
 						if (failedLogInCount >2) {
 							out.println("There have been too many unsuccessful login attempts, " +
 									"please disconnect and try again later.");
+							//checks frequency of usernames entered
+							String userToLock = userLogInFrequency(failedLogInUsers, 3);
+							//if username entered x3 corresponds to actual username, locks it
+							if (NewBank.getBank().getCustomers().containsKey(userToLock)){
+								NewBank.getBank().getCustomer(userToLock).setAccountLocked();
+								out.println("The account: " + userToLock + " has been locked.");
+							}
 							break;
 						}
 
@@ -60,7 +72,9 @@ public class NewBankClientHandler extends Thread {
 							} else {
 								out.println("Loading...");
 								out.println("Log In Failed.\n");
+								//increases failed log in count by one and adds the string of username to failed login list.
 								failedLogInCount += 1;
+								failedLogInUsers.add(userName);
 							}
 						}
 						break;
@@ -128,5 +142,23 @@ public class NewBankClientHandler extends Thread {
 		out.println("+---------------------------------------------------+");
 	}
 
+	//counts the frequency of usernames for which logins have been attempted and checks against maximum attempts set
+	private String userLogInFrequency(ArrayList<String> failedLogInUsers, int maxAttempts){
+		Map<String, Integer> countMap = new HashMap<String, Integer>();
+
+		//adds each unique string to HashMap and counts
+		for(String s : failedLogInUsers){
+			Integer i = countMap.get(s);
+			countMap.put(s, (i == null) ? 1 : i + 1);
+		}
+
+		//if number of times username has been attempted == maxAttempts then returns username
+		for (Map.Entry<String, Integer> set : countMap.entrySet()){
+			if (set.getValue() == maxAttempts){
+				return set.getKey();
+			}
+		}
+		return null;
+	}
 
 }

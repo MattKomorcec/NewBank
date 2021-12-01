@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Customer {
 
+	private boolean accountLocked = false;
+
 	private ArrayList<Account> accounts;
 	String username;
 	String password;
@@ -58,5 +60,13 @@ public class Customer {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public void setAccountLocked(){
+		accountLocked = true;
+	}
+
+	public void setUnlockAccount(){
+		accountLocked = false;
 	}
 }

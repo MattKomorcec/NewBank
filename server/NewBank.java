@@ -87,4 +87,8 @@ public class NewBank {
 		}
 		return "";
 	}
+
+	public Customer getCustomer(String s){
+		return customers.get(s);
+	}
 }
