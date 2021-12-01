@@ -38,8 +38,9 @@ public class NewBankServer extends Thread {
 		// starts a new NewBankServer thread on a specified port number
 		new NewBankServer(14002).start();
 
+		UserRegistration ur = new UserRegistration();
 		//needed to call user reg class.
-		UserRegistration ur = UserRegistration.newUser();
+		ur = ur.newUser();
 	}
 
 }

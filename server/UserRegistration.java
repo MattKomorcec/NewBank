@@ -1,6 +1,5 @@
 package newbank.server;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,23 +13,18 @@ import java.util.Scanner;
 
 public class UserRegistration {
 
-    private static Scanner sc = new Scanner(System.in);
-        UserRegistration ur = UserRegistration.newUser();
-    public UserRegistration() throws SQLException {
-    }
+    private Scanner sc = new Scanner(System.in);
 
-    public static UserRegistration newUser() throws SQLException {
+    public UserRegistration newUser() throws SQLException {
         // set all methods to return values - to then push to db.
-        String UserFullname = UserRegistration.getNameFromUser();
-        String UserDob = UserRegistration.getDateFromUser();
-        String UserId = UserRegistration.getNewUserId();
-        String UserAccountNumber = UserRegistration.getNewUserAccountNumber();
-        String UserSortcode = UserRegistration.getNewUserSortCode();
-        String UserPassword = UserRegistration.getNewUserInputNewPassword();
-        Integer UserBalance = Integer.valueOf(UserRegistration.getNewUserBalance());
-        String UserSecretQuestion = UserRegistration.getUserSecretQuestion();
-        Boolean UserCheckHuman = UserRegistration.getUserCheckHuman();
-
+        String UserFullname = getNameFromUser();
+        String UserDob = getDateFromUser();
+        String UserId = getNewUserId();
+        String UserAccountNumber = getNewUserAccountNumber();
+        String UserSortcode = getNewUserSortCode();
+        String UserPassword = getNewUserInputNewPassword();
+        Integer UserBalance = Integer.valueOf(getNewUserBalance());
+        String UserSecretQuestion = getUserSecretQuestion();
 
         // All already scanned by scanner then passed as values to 'String addNewUser'
         Connection conn = null;
@@ -68,15 +62,15 @@ public class UserRegistration {
         return null;
     }
 
-    private static String getNameFromUser() {
+    private String getNameFromUser() {
         String newName;
         String newFirstName;
         String newLastName;
 
-        System.out.println(" ");
+        System.out.println("\n");
         System.out.print("                                               Welcome to NewBank Registration");
-        System.out.println(" ");
-        System.out.println(" ");
+        System.out.println("\n");
+        System.out.println("\n");
         System.out.println("\n Please ensure your terminal is fully open to ensure full user experience");
         System.out.print("\nPlease enter your first name: ");
         newFirstName = sc.nextLine().toUpperCase();
@@ -104,7 +98,7 @@ public class UserRegistration {
         return newName;
     }
 
-    private static String getDateFromUser() {
+    private String getDateFromUser() {
         boolean isItDate = false;
         String enteredDate;
         String userDateResponse;
@@ -119,18 +113,18 @@ public class UserRegistration {
             System.out.println("Is the date of birth correct (Y/N)?: ");
             userDateResponse = sc.nextLine().toUpperCase();
             if (userDateResponse.equals("N")) {
-                System.out.print("\nPlease create a new Date of birth: ");
-                enteredDate = sc.nextLine();
-                System.out.println("\nThe date of birth has been updated to:");
-                System.out.println("\nConfirm new date of birth(Y/N): " + " " + enteredDate);
-                userDateResponse = sc.nextLine().toUpperCase();
+            System.out.print("\nPlease create a new Date of birth: ");
+            enteredDate = sc.nextLine();
+            System.out.println("\nThe date of birth has been updated to:");
+            System.out.println("\nConfirm new date of birth(Y/N): " + " " + enteredDate);
+            userDateResponse = sc.nextLine().toUpperCase();
             }
         } while (!userDateResponse.equals("Y"));
         return enteredDate;
     }
 
 
-    public static boolean isDateValid(String enteredDate) {
+    public boolean isDateValid(String enteredDate) {
         enteredDate = enteredDate + " 00:00:00";
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
         Date date;
@@ -143,7 +137,7 @@ public class UserRegistration {
         return isUserEighteen(date);
     }
 
-    public static boolean isUserEighteen(Date dateToCheck) {
+    public boolean isUserEighteen(Date dateToCheck) {
         Calendar doB = Calendar.getInstance();
         doB.setTime(dateToCheck);
         doB.add(Calendar.YEAR, 18);
@@ -156,9 +150,7 @@ public class UserRegistration {
         return false;
     }
 
-
-    private static String getNewUserId() {
-        Scanner sc = new Scanner(System.in);
+    private String getNewUserId() {
         String userAnswer;
         String newUsername;
         do {
@@ -171,17 +163,17 @@ public class UserRegistration {
         return newUsername;
     }
 
-    public static String getNewUserAccountNumber() {
+    public String getNewUserAccountNumber() {
         int min = 11121211;
         int max = 99879199;
         int accountNumber = (int) Math.floor(Math.random() * (max - min + 1) + min);
-        System.out.println(" ");
+        System.out.println("\n");
         System.out.println("\n The new account the account number and sortcode will be:");
         System.out.println("                 Account Number:" + " " + accountNumber);
         return String.valueOf(accountNumber);
     }
 
-    public static String getNewUserSortCode() {
+    public String getNewUserSortCode() {
         int min = 111212;
         int max = 998791;
         int accountSortCode = (int) Math.floor(Math.random() * (max - min + 1) + min);
@@ -190,20 +182,19 @@ public class UserRegistration {
     }
 
 
-    public static String getNewUserInputNewPassword() {
+    public String getNewUserInputNewPassword() {
         //Boolean password conditions = to check that:
         // Contains more than 8 chars.
         // Contains at least one numerical value.
         // Contains at least one capital letter.
         // Contains at least one lowercase letter.
-
         Scanner sc = new Scanner(System.in);
         String newPassword;
         boolean passwordChecks;
         String userAnswerPassword;
         do {
             passwordChecks = true;
-            System.out.println(" ");
+            System.out.println("\n");
             System.out.println("\nYou will now need to create a password for this account");
             System.out.print("\nThe password must be (At least 8 letters long, contain a capital letter, a lowercase letter and numerical value)");
             System.out.println("\nPlease create your new password: ");
@@ -211,7 +202,7 @@ public class UserRegistration {
             if (!passwordLength(newPassword)) {
                 passwordChecks = false;
             }
-            if (!passwordChecks(newPassword)) {
+            if (!doesPasswordFulfillChecks(newPassword)) {
                 passwordChecks = false;
             }
         } while (!passwordChecks);
@@ -228,23 +219,21 @@ public class UserRegistration {
                 userAnswerPassword = sc.nextLine().toUpperCase();
             }
         } while (!passwordChecks & userAnswerPassword.equals("N"));
-
-        System.out.println("\n Your new password is:" + " " + newPassword);
+        System.out.println("\nYour new password is: " + newPassword);
         return newPassword;
     }
 
 
-    public static boolean passwordLength(String newPassword) {
+    public boolean passwordLength(String newPassword) {
         if (newPassword.length() > 7) {
-            return passwordChecks(newPassword);
+            return doesPasswordFulfillChecks(newPassword);
         } else {
-            System.out.println(" ");
-            System.out.println("\nSorry the password" + " " + newPassword + " " + "does not meet the requirements");
+            System.out.println("\nSorry the password " + newPassword + " does not meet the requirements");
             return false;
         }
     }
 
-    private static boolean passwordChecks(String newPassword) {
+    private boolean doesPasswordFulfillChecks(String newPassword) {
         boolean numericalCheck = false;
         boolean capitalCheck = false;
         boolean lowerCaseCheck = false;
@@ -268,23 +257,23 @@ public class UserRegistration {
     }
 
 
-    public static String getNewUserBalance() {
+    public String getNewUserBalance() {
         String userOpenBalance;
-        boolean isItAFloat;
+        boolean isFloat;
         String response;
         float newBalance;
         do {
-            isItAFloat = true;
+            isFloat = true;
             System.out.println("\nPlease enter your opening balance (xx.xx): ");
             userOpenBalance = sc.nextLine();
             try {
                 newBalance = Float.parseFloat(userOpenBalance);
                 System.out.println("New Account Balance:" + "£" + newBalance);
             } catch (Exception e) {
-                isItAFloat = false;
+                isFloat = false;
                 System.out.println("\nThis is not a correct value input");
             }
-        } while (!isItAFloat);
+        } while (!isFloat);
         do {
             System.out.print("\nIs this correct (Y/N)?: ");
             response = sc.nextLine().toUpperCase();
@@ -295,22 +284,20 @@ public class UserRegistration {
                     newBalance = Float.parseFloat(userOpenBalance);
                     System.out.println("New Account Balance:" + "£" + newBalance);
                 } catch (Exception e) {
-                    isItAFloat = false;
+                    isFloat = false;
                     System.out.println("\nThis is not a correct value input");
                 }
-                System.out.print("\nIs this correct (Y/N)?: ");
+                System.out.print("\nIs this correct (Y/N)?: " + "£" + userOpenBalance);
                 response = sc.nextLine().toUpperCase();
             }
         } while (!response.equals("Y"));
-        System.out.println("New Account Balance:" + "£" + userOpenBalance);
         return userOpenBalance;
     }
 
-    public static String getUserSecretQuestion() {
+    public String getUserSecretQuestion() {
         String secretQuestionAnswer;
-        Scanner sc = new Scanner(System.in);
         String response;
-        System.out.println(" ");
+        System.out.println("\n");
         System.out.println("\nPlease now answer the following secret question");
         System.out.println("\nWhat was your first pets name?: ");
         secretQuestionAnswer = sc.nextLine();
@@ -330,7 +317,7 @@ public class UserRegistration {
     }
 
 
-    public static boolean getUserCheckHuman() {
+    public boolean getUserCheckHuman() {
         //No condition or iterations as checks once to ensure the user is human.
         //Generates a random number between 1-10 for each multiplication value.
         int answerToQuestion;
@@ -344,12 +331,11 @@ public class UserRegistration {
         System.out.println("\nPlease now complete the following question");
         System.out.println("What is" + " " + number1 + " " + "x" + " " + number2 + " " + " = ");
         userAnswer = sc.nextInt();
-        // Checks to see if user answer is equal to 30.
         if (userAnswer.equals(answerToQuestion)) {
-            System.out.println("\nNew User passed security check");
-            System.out.println("\nUser now registered");
-            System.out.println("\nYou can now log in to your NewBank account");
-            return true;
+        System.out.println("\nNew User passed security check");
+        System.out.println("\nUser now registered");
+        System.out.println("\nYou can now log in to your NewBank account");
+        return true;
         }
         System.out.println("\nYou have failed the security check, and cannot register an account with us today");
         return false;
