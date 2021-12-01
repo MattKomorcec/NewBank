@@ -256,7 +256,6 @@ public class UserRegistration {
         return false;
     }
 
-
     public String getNewUserBalance() {
         String userOpenBalance;
         boolean isFloat;
