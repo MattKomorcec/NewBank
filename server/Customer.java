@@ -63,10 +63,15 @@ public class Customer {
 	}
 
 	public void setAccountLocked(){
-		accountLocked = true;
+		this.accountLocked = true;
 	}
 
 	public void setUnlockAccount(){
-		accountLocked = false;
+		this.accountLocked = false;
 	}
+
+	public boolean isAccountLocked() {
+		return accountLocked;
+	}
+
 }

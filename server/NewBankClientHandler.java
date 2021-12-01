@@ -37,13 +37,6 @@ public class NewBankClientHandler extends Thread {
 						if (failedLogInCount >2) {
 							out.println("There have been too many unsuccessful login attempts, " +
 									"please disconnect and try again later.");
-							//checks frequency of usernames entered
-							String userToLock = userLogInFrequency(failedLogInUsers, 3);
-							//if username entered x3 corresponds to actual username, locks it
-							if (NewBank.getBank().getCustomers().containsKey(userToLock)){
-								NewBank.getBank().getCustomer(userToLock).setAccountLocked();
-								out.println("The account: " + userToLock + " has been locked.");
-							}
 							break;
 						}
 
@@ -76,6 +69,14 @@ public class NewBankClientHandler extends Thread {
 								failedLogInCount += 1;
 								failedLogInUsers.add(userName);
 							}
+						}
+
+						//checks frequency of usernames entered
+						String userToLock = userLogInFrequency(failedLogInUsers, 3);
+						//if username entered x3 corresponds to actual username, locks it
+						if (NewBank.getBank().getCustomers().containsKey(userToLock)) {
+							NewBank.getBank().getCustomer(userToLock).setAccountLocked();
+							out.println("The account: " + userToLock + " has been locked.");
 						}
 						break;
 					case "2":
