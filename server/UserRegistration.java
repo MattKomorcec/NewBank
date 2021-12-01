@@ -321,7 +321,6 @@ public class UserRegistration {
         //Generates a random number between 1-10 for each multiplication value.
         int answerToQuestion;
         Integer userAnswer;
-        Scanner sc = new Scanner(System.in);
         int min = 1;
         int max = 10;
         int number1 = (int) Math.floor(Math.random() * (max - min + 1) + min);
