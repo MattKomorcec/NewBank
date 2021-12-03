@@ -84,7 +84,7 @@ public class AccountManagement {
             return newBankClientHandler.printCustomerMenu();
         }
         else {
-            newBankClientHandler.sendOutput("Please enter the type of your account you wish to remove or 'Q' to quit:");
+            newBankClientHandler.sendOutput("Please enter the account type you wish to remove or 'Q' to quit:");
             // Checking if the selected account exist in the Account list.
             selectedAccount = transaction.getMyAccount(customer, newBankClientHandler);
             // Checking if the user wishes to quit.
