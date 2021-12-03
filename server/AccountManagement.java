@@ -38,7 +38,7 @@ public class AccountManagement {
             }
             // Checking if user input is blank.
             if (newAccountType.trim().length() == 0 || newAccountType.length() == 0) {
-                newBankClientHandler.sendOutput("An appropriate account type  must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
+                newBankClientHandler.sendOutput("An appropriate account type must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
                 continue;
             }
             // Checking if the selected account type already exists.
@@ -60,7 +60,7 @@ public class AccountManagement {
                     valid = true;
                 }
                 else {
-                    newBankClientHandler.sendOutput("An appropriate account type  must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
+                    newBankClientHandler.sendOutput("An appropriate account type must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
                 }
             }
             else {
@@ -84,7 +84,7 @@ public class AccountManagement {
             return newBankClientHandler.printCustomerMenu();
         }
         else {
-            newBankClientHandler.sendOutput("Please enter name of your account you wish to remove or 'Q' to quit:");
+            newBankClientHandler.sendOutput("Please enter the type of your account you wish to remove or 'Q' to quit:");
             // Checking if the selected account exist in the Account list.
             selectedAccount = transaction.getMyAccount(customer, newBankClientHandler);
             // Checking if the user wishes to quit.
