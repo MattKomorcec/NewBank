@@ -44,6 +44,16 @@ public class NewBankClientHandler extends Thread {
 							// Ask for username
 							out.println("Enter Username:");
 							String userName = in.readLine();
+
+							/*
+							checks if account is locked, note will only be useful once database is running and
+							the database stores accountLocked variable. Currently resetting connection resets
+							the customer HashMap
+							*/
+							if (isAccountLocked(userName)){
+								out.println("This account is locked.");
+								break;
+							}
 							// Ask for password
 							out.println("Enter Password:");
 							String password = in.readLine();
@@ -155,11 +165,15 @@ public class NewBankClientHandler extends Thread {
 
 		//if number of times username has been attempted == maxAttempts then returns username
 		for (Map.Entry<String, Integer> set : countMap.entrySet()){
-			if (set.getValue() == maxAttempts){
+			if (set.getValue() >= maxAttempts){
 				return set.getKey();
 			}
 		}
 		return null;
+	}
+
+	private boolean isAccountLocked(String userName){
+		return NewBank.getBank().getCustomer(userName).isAccountLocked();
 	}
 
 }
