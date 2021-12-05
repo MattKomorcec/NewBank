@@ -36,11 +36,10 @@ public class NewBankServer extends Thread {
 
 	public static void main(String[] args) throws IOException, SQLException {
 		// starts a new NewBankServer thread on a specified port number
-		new NewBankServer(14002).start();
+		new NewBankServer(14005).start();
 
 		UserRegistration ur = new UserRegistration();
 		//needed to call user reg class.
 		ur = ur.newUser();
 	}
-
 }

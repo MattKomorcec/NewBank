@@ -13,41 +13,42 @@ import java.util.Scanner;
 
 public class UserRegistration {
 
-    private Scanner sc = new Scanner(System.in);
+    private final Scanner sc = new Scanner(System.in);
+    private final int ACCOUNT_LOCKED_INITIAL = 0; // 0 - false, 1 - true
 
     public UserRegistration newUser() throws SQLException {
-        // set all methods to return values - to then push to db.
         String UserFullname = getNameFromUser();
         String UserDob = getDateFromUser();
-        String UserId = getNewUserId();
+        String username = getUsername();
         String UserAccountNumber = getNewUserAccountNumber();
         String UserSortcode = getNewUserSortCode();
         String UserPassword = getNewUserInputNewPassword();
-        Integer UserBalance = Integer.valueOf(getNewUserBalance());
+        int UserBalance = getNewUserBalance();
         String UserSecretQuestion = getUserSecretQuestion();
 
-        // All already scanned by scanner then passed as values to 'String addNewUser'
         Connection conn = null;
         try {
-            String url = "jdbc:sqlite:identifier.sqlite";
+            String url = "jdbc:sqlite:database.db";
             conn = DriverManager.getConnection(url);
-            // Will allow for the database connection.
-            String addNewUser = "INSERT INTO userDatabase(full_name, dob, username, account_number, sortcode, password, balance, secret_answer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String addNewUser = "INSERT INTO users(dob, username, password, account_number, sortcode, balance, secret_answer, account_locked, full_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             // New values passed to db.
             PreparedStatement updateUserdb = conn.prepareStatement(addNewUser);
 
-            updateUserdb.setString(1, UserFullname);
-            updateUserdb.setString(2, UserDob);
-            updateUserdb.setString(3, UserId);
+            updateUserdb.setString(1, UserDob);
+            updateUserdb.setString(2, username);
+            updateUserdb.setString(3, UserPassword);
             updateUserdb.setString(4, UserAccountNumber);
             updateUserdb.setString(5, UserSortcode);
-            updateUserdb.setString(6, UserPassword);
-            updateUserdb.setInt(7, UserBalance);
-            updateUserdb.setString(8, UserSecretQuestion);
+            updateUserdb.setInt(6, UserBalance);
+            updateUserdb.setString(7, UserSecretQuestion);
+            updateUserdb.setInt(8, ACCOUNT_LOCKED_INITIAL);
+            updateUserdb.setString(9, UserFullname);
             updateUserdb.executeUpdate();
+
+            System.out.println("User account successfully created, you may now login.");
+
             conn.commit();
-            // The db will now push the output.
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -78,7 +79,7 @@ public class UserRegistration {
         System.out.print("\nPlease enter your last name: ");
         newLastName = sc.nextLine().toUpperCase();
         newName = newFirstName + " " + newLastName;
-        System.out.print("\nThe name associated with this account will be:" + " " + newName);
+        System.out.print("\nThe name associated with this account will be: " + newName);
         String response;
         do {
             System.out.print("\nIs this correct (Y/N)?: ");
@@ -90,7 +91,7 @@ public class UserRegistration {
                 System.out.println("\nWhat will the new last name be: ");
                 newLastName = sc.nextLine().toUpperCase();
                 newName = newFirstName + " " + newLastName;
-                System.out.print("\nThe name associated with this account will be:" + " " + newName);
+                System.out.print("\nThe name associated with this account will be: " + newName);
                 System.out.print("\nIs this correct (Y/N)?: ");
                 response = sc.nextLine().toUpperCase();
             }
@@ -99,32 +100,31 @@ public class UserRegistration {
     }
 
     private String getDateFromUser() {
-        boolean isItDate = false;
+        boolean isItDate;
         String enteredDate;
         String userDateResponse;
         do {
             System.out.print("For your date of birth please enter in the format of (DD/MM/YYYY) including /");
             System.out.println("\nDate of Birth: ");
             enteredDate = sc.nextLine();
-            System.out.println("\nThe date of birth is set to:" + " " + enteredDate);
+            System.out.println("\nThe date of birth is set to: " + enteredDate);
             isItDate = isDateValid(enteredDate);
         } while (!isItDate);
         do {
             System.out.println("Is the date of birth correct (Y/N)?: ");
             userDateResponse = sc.nextLine().toUpperCase();
             if (userDateResponse.equals("N")) {
-            System.out.print("\nPlease create a new Date of birth: ");
-            enteredDate = sc.nextLine();
-            System.out.println("\nThe date of birth has been updated to:");
-            System.out.println("\nConfirm new date of birth(Y/N): " + " " + enteredDate);
-            userDateResponse = sc.nextLine().toUpperCase();
+                System.out.print("\nPlease create a new Date of birth: ");
+                enteredDate = sc.nextLine();
+                System.out.println("\nThe date of birth has been updated to:");
+                System.out.println("\nConfirm new date of birth(Y/N): " + enteredDate);
+                userDateResponse = sc.nextLine().toUpperCase();
             }
         } while (!userDateResponse.equals("Y"));
         return enteredDate;
     }
 
-
-    public boolean isDateValid(String enteredDate) {
+    private boolean isDateValid(String enteredDate) {
         enteredDate = enteredDate + " 00:00:00";
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
         Date date;
@@ -137,7 +137,7 @@ public class UserRegistration {
         return isUserEighteen(date);
     }
 
-    public boolean isUserEighteen(Date dateToCheck) {
+    private boolean isUserEighteen(Date dateToCheck) {
         Calendar doB = Calendar.getInstance();
         doB.setTime(dateToCheck);
         doB.add(Calendar.YEAR, 18);
@@ -150,45 +150,43 @@ public class UserRegistration {
         return false;
     }
 
-    private String getNewUserId() {
+    private String getUsername() {
         String userAnswer;
         String newUsername;
         do {
             System.out.print("\nPlease create a new username: ");
             newUsername = sc.nextLine();
-            System.out.println("\nIs the username correct(Y/N): " + " " + newUsername);
+            System.out.println("\nIs the username correct(Y/N): " + newUsername);
             userAnswer = sc.nextLine().toUpperCase();
         } while (userAnswer.equals("N"));
-        System.out.println("\n The username is set to:" + newUsername);
+        System.out.println("\n The username is set to: " + newUsername);
         return newUsername;
     }
 
-    public String getNewUserAccountNumber() {
+    private String getNewUserAccountNumber() {
         int min = 11121211;
         int max = 99879199;
         int accountNumber = (int) Math.floor(Math.random() * (max - min + 1) + min);
         System.out.println("\n");
         System.out.println("\n The new account the account number and sortcode will be:");
-        System.out.println("                 Account Number:" + " " + accountNumber);
+        System.out.println("                 Account Number: " + accountNumber);
         return String.valueOf(accountNumber);
     }
 
-    public String getNewUserSortCode() {
+    private String getNewUserSortCode() {
         int min = 111212;
         int max = 998791;
         int accountSortCode = (int) Math.floor(Math.random() * (max - min + 1) + min);
-        System.out.println("                 Sortcode:" + " " + accountSortCode);
+        System.out.println("                 Sortcode: " + accountSortCode);
         return String.valueOf(accountSortCode);
     }
 
-
-    public String getNewUserInputNewPassword() {
+    private String getNewUserInputNewPassword() {
         //Boolean password conditions = to check that:
         // Contains more than 8 chars.
         // Contains at least one numerical value.
         // Contains at least one capital letter.
         // Contains at least one lowercase letter.
-        Scanner sc = new Scanner(System.in);
         String newPassword;
         boolean passwordChecks;
         String userAnswerPassword;
@@ -206,25 +204,26 @@ public class UserRegistration {
                 passwordChecks = false;
             }
         } while (!passwordChecks);
+
         do {
-            System.out.println("\n Your new password is:" + " " + newPassword);
+            System.out.println("\n Your new password is: " + newPassword);
             System.out.println("\nConfirm password (Y/N): ");
             userAnswerPassword = sc.nextLine().toUpperCase();
             if (userAnswerPassword.equals("N")) {
                 System.out.println("\nThe password must be (At least 8 letters long, contain a capital letter, a lowercase letter and numerical value)");
                 System.out.println("\nPlease create your new password: ");
                 newPassword = sc.nextLine();
-                System.out.println("Ok the password has now been updated:" + newPassword);
+                System.out.println("Ok the password has now been updated: " + newPassword);
                 System.out.println("\nConfirm new password(Y/N): ");
                 userAnswerPassword = sc.nextLine().toUpperCase();
             }
-        } while (!passwordChecks & userAnswerPassword.equals("N"));
+        } while (userAnswerPassword.equals("N"));
+
         System.out.println("\nYour new password is: " + newPassword);
         return newPassword;
     }
 
-
-    public boolean passwordLength(String newPassword) {
+    private boolean passwordLength(String newPassword) {
         if (newPassword.length() > 7) {
             return doesPasswordFulfillChecks(newPassword);
         } else {
@@ -256,23 +255,25 @@ public class UserRegistration {
         return false;
     }
 
-    public String getNewUserBalance() {
+    private int getNewUserBalance() {
         String userOpenBalance;
-        boolean isFloat;
         String response;
-        float newBalance;
+        int newBalance = 0;
+        boolean inputCorrect;
+
         do {
-            isFloat = true;
-            System.out.println("\nPlease enter your opening balance (xx.xx): ");
+            System.out.println("\nPlease enter your opening balance (£xxx): ");
             userOpenBalance = sc.nextLine();
             try {
-                newBalance = Float.parseFloat(userOpenBalance);
-                System.out.println("New Account Balance:" + "£" + newBalance);
+                newBalance = Integer.parseInt(userOpenBalance);
+                System.out.println("New Account Balance: £" + newBalance);
+                inputCorrect = true;
             } catch (Exception e) {
-                isFloat = false;
                 System.out.println("\nThis is not a correct value input");
+                inputCorrect = false;
             }
-        } while (!isFloat);
+        } while (!inputCorrect);
+
         do {
             System.out.print("\nIs this correct (Y/N)?: ");
             response = sc.nextLine().toUpperCase();
@@ -280,27 +281,27 @@ public class UserRegistration {
                 System.out.print("Ok,what would you like the update opening balance to be?: ");
                 userOpenBalance = sc.nextLine();
                 try {
-                    newBalance = Float.parseFloat(userOpenBalance);
-                    System.out.println("New Account Balance:" + "£" + newBalance);
+                    newBalance = Integer.parseInt(userOpenBalance);
+                    System.out.println("New Account Balance: £" + newBalance);
                 } catch (Exception e) {
-                    isFloat = false;
                     System.out.println("\nThis is not a correct value input");
                 }
-                System.out.print("\nIs this correct (Y/N)?: " + "£" + userOpenBalance);
+                System.out.print("\nIs this correct (Y/N)?: £" + userOpenBalance);
                 response = sc.nextLine().toUpperCase();
             }
         } while (!response.equals("Y"));
-        return userOpenBalance;
+
+        return newBalance;
     }
 
-    public String getUserSecretQuestion() {
+    private String getUserSecretQuestion() {
         String secretQuestionAnswer;
         String response;
         System.out.println("\n");
         System.out.println("\nPlease now answer the following secret question");
         System.out.println("\nWhat was your first pets name?: ");
         secretQuestionAnswer = sc.nextLine();
-        System.out.println("The secret answer is set to: " + " " + secretQuestionAnswer);
+        System.out.println("The secret answer is set to: " + secretQuestionAnswer);
         do {
             System.out.print("\nIs this correct (Y/N)?: ");
             response = sc.nextLine().toUpperCase();
@@ -315,25 +316,26 @@ public class UserRegistration {
         return secretQuestionAnswer;
     }
 
-
-    public boolean getUserCheckHuman() {
+    private boolean getUserCheckHuman() {
         //No condition or iterations as checks once to ensure the user is human.
         //Generates a random number between 1-10 for each multiplication value.
         int answerToQuestion;
-        Integer userAnswer;
+        int userAnswer;
         int min = 1;
         int max = 10;
         int number1 = (int) Math.floor(Math.random() * (max - min + 1) + min);
         int number2 = (int) Math.floor(Math.random() * (max - min + 1) + min);
         answerToQuestion = number1 * number2;
+
         System.out.println("\nPlease now complete the following question");
-        System.out.println("What is" + " " + number1 + " " + "x" + " " + number2 + " " + " = ");
+        System.out.println("What is " + number1 + " x " + number2 + " = ");
         userAnswer = sc.nextInt();
-        if (userAnswer.equals(answerToQuestion)) {
-        System.out.println("\nNew User passed security check");
-        System.out.println("\nUser now registered");
-        System.out.println("\nYou can now log in to your NewBank account");
-        return true;
+
+        if (userAnswer == answerToQuestion) {
+            System.out.println("\nNew User passed security check");
+            System.out.println("\nUser now registered");
+            System.out.println("\nYou can now log in to your NewBank account");
+            return true;
         }
         System.out.println("\nYou have failed the security check, and cannot register an account with us today");
         return false;
