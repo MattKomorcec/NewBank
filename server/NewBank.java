@@ -21,15 +21,15 @@ public class NewBank {
 
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "1234");
-		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
 		customers.put(bhagy.getUsername(), bhagy);
 
 		Customer christina = new Customer("Christina", "1234");
-		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
 		customers.put(christina.getUsername(), christina);
 
 		Customer john = new Customer("Johh","1234");
-		john.addAccount(new Account("Checking", 250.0));
+		john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
 		customers.put(john.getUsername(), john);
 	}
 
@@ -61,13 +61,15 @@ public class NewBank {
 		if (customers.containsKey(customer.getUsername())) {
 			switch (request) {
 				case "1":
-					return accountManagement.showMyAccounts(customer);
+					return accountManagement.showMyAccounts(customer, newBankClientHandler);
 				case "2":
 					return accountManagement.newAccount(customer, newBankClientHandler);
 				case "3":
 					return transaction.moveFunds(customer, newBankClientHandler);
 				case "4":
 					return transaction.payFunds(customer, newBankClientHandler);
+				case "5":
+					return accountManagement.removeAccount(customer,newBankClientHandler);
 				default:
 					return "FAIL";
 			}
