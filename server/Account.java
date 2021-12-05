@@ -1,21 +1,26 @@
 package newbank.server;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Account {
 
 	private String accountName;
+	enum AccountType {MAIN, SAVINGS, INVESTMENTS};
+	private final AccountType accountType;
 	private double balance;
 
-	public Account(String accountName, double balance) {
-		this.accountName = accountName;
+	public Account(AccountType accountType, double balance) {
+		this.accountType = accountType;
 		this.balance = balance;
 	}
 
 	public String toString() {
-		return (accountName + ": " + balance);
+		return (accountType + " : £"+balance);
 	}
 
-	public String getAccountName() {
-		return accountName;
+	public AccountType getAccountType() {
+		return accountType;
 	}
 
 	public double getBalance() {
@@ -25,6 +30,5 @@ public class Account {
 	public void setBalance(double d) {
 		balance = d;
 	}
-
 }
 

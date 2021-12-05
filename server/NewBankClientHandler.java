@@ -14,7 +14,6 @@ public class NewBankClientHandler extends Thread {
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
-	private int failedLogInCount = 0;
 	private ArrayList<String> failedLogInUsers = new ArrayList<>();
 
 
@@ -27,33 +26,31 @@ public class NewBankClientHandler extends Thread {
 	public void run() {
 		out.println("+------------------------------------+");
 		out.println("|Welcome to NewBank                  |");
+		out.println("+------------------------------------+");
 		try {
 			while (true) {
-				showInitialMenu();
+				printInitialMenu();
 				switch (in.readLine()) {
 					case "1":
 
+
 						//If 3 failed login attempts during session, does not allow login
-						if (failedLogInCount >2) {
+						if (failedLogInUsers.size()>4) {
 							out.println("There have been too many unsuccessful login attempts, " +
 									"please disconnect and try again later.");
 							break;
 						}
 
-						while (failedLogInCount<3) {
+						while (failedLogInUsers.size()<5) {
 							// Ask for username
 							out.println("Enter Username:");
 							String userName = in.readLine();
 
-							/*
-							checks if account is locked, note will only be useful once database is running and
-							the database stores accountLocked variable. Currently resetting connection resets
-							the customer HashMap
-							*/
 							if (isAccountLocked(userName)){
 								out.println("This account is locked.");
 								break;
 							}
+
 							// Ask for password
 							out.println("Enter Password:");
 							String password = in.readLine();
@@ -64,30 +61,29 @@ public class NewBankClientHandler extends Thread {
 
 							// If the user is authenticated then get requests from the user and process them.
 							if (customer != null) {
-								showCustomerMenu(customer);
+								out.println("\nLoading...\n");
+								out.println("Log In Successful.\n");
+								out.println("Welcome to your NewBank account " + customer.getUsername()+".");
+								printCustomerMenu();
 								while (true) {
 									String request = in.readLine();
-									System.out.println("Request from " + customer.getUsername());
+									out.println("Request from " + customer.getUsername());
 									// Added pass newBankClientHandler Object into processRequest, so it can call methods
 									String response = bank.processRequest(customer, request, this);
 									out.println(response);
 								}
 							} else {
-								out.println("Loading...");
+								out.println("Loading...\n");
 								out.println("Log In Failed.\n");
-								//increases failed log in count by one and adds the string of username to failed login list.
-								failedLogInCount += 1;
+								//adds the string of username to failed login list.
+
 								failedLogInUsers.add(userName);
+								Map logInFrequencyMap = userLogInFrequency();
+								lockUsers(logInFrequencyMap, 3);
+
 							}
 						}
 
-						//checks frequency of usernames entered
-						String userToLock = userLogInFrequency(failedLogInUsers, 3);
-						//if username entered x3 corresponds to actual username, locks it
-						if (NewBank.getBank().getCustomers().containsKey(userToLock)) {
-							NewBank.getBank().getCustomer(userToLock).setAccountLocked();
-							out.println("The account: " + userToLock + " has been locked.");
-						}
 						break;
 					case "2":
 						break;
@@ -130,7 +126,8 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 
-	private void showInitialMenu(){
+	// Printing Initial Menu.
+	private void printInitialMenu () {
 		out.println("+------------------------------------+");
 		out.println("|NewBank - Initial Menu              |");
 		out.println("+------------------------------------+");
@@ -139,10 +136,8 @@ public class NewBankClientHandler extends Thread {
 		out.println("+------------------------------------+");
 	}
 
-	private void showCustomerMenu(Customer customer){
-		out.println("\nLoading...\n");
-		out.println("Log In Successful.\n");
-		out.println("Welcome to your NewBank account " + customer.getUsername()+".");
+	// Printing Customer Menu.
+	public String printCustomerMenu () {
 		out.println("\n+---------------------------------------------------+");
 		out.println("|NewBank - Customer Menu                            |");
 		out.println("+---------------------------------------------------+");
@@ -150,28 +145,43 @@ public class NewBankClientHandler extends Thread {
 		out.println("|(2) - Create a new account with zero opening funds |");
 		out.println("|(3) - Move funds between your existing accounts    |");
 		out.println("|(4) - Pay an existing NewBank customer             |");
+		out.println("|(5) - Remove an existing account                   |");
 		out.println("+---------------------------------------------------+");
+		return "\n";
 	}
 
 	//counts the frequency of usernames for which logins have been attempted and checks against maximum attempts set
-	private String userLogInFrequency(ArrayList<String> failedLogInUsers, int maxAttempts){
-		Map<String, Integer> countMap = new HashMap<String, Integer>();
+	private Map<String, Integer> userLogInFrequency(){
+		Map<String, Integer> countMap = new HashMap<>();
 
-		//adds each unique string to HashMap and counts
+		//adds each unique string to HashMap and counts the frequency
 		for(String s : failedLogInUsers){
 			Integer i = countMap.get(s);
 			countMap.put(s, (i == null) ? 1 : i + 1);
 		}
-
-		//if number of times username has been attempted == maxAttempts then returns username
-		for (Map.Entry<String, Integer> set : countMap.entrySet()){
-			if (set.getValue() >= maxAttempts){
-				return set.getKey();
-			}
-		}
-		return null;
+		return countMap;
 	}
 
+	private void lockUsers(Map<String, Integer> countMap, int maxAttempts){
+
+		//iterates through the map of login frequencies, and for each username checks if the number of logins >maxAttempts
+		//if yes, and the account is not already locked, it locks it and prints message
+		for (Map.Entry<String, Integer> set : countMap.entrySet()){
+			if (set.getValue() >= maxAttempts){
+				if (NewBank.getBank().getCustomers().containsKey(set.getKey()) &&
+						!isAccountLocked(set.getKey())) {
+					NewBank.getBank().getCustomer(set.getKey()).setAccountLocked(true);
+					out.println("The account: " + set.getKey() + " has been locked.");
+				}
+			}
+		}
+	}
+
+	/*
+    checks if account is locked, note will only be useful once database is running and
+    the database stores accountLocked variable. Currently resetting connection resets
+    the customer HashMap
+	*/
 	private boolean isAccountLocked(String userName){
 		return NewBank.getBank().getCustomer(userName).isAccountLocked();
 	}

@@ -20,7 +20,6 @@ public class Customer {
 		String s = "";
 		for (Account a : accounts) {
 			s += a.toString();
-			//add new line if more than one account
 			if (accounts.size() > 1) {
 				s += "\n";
 			}
@@ -32,22 +31,26 @@ public class Customer {
 		accounts.add(account);
 	}
 
+	public void removeAccount (Account account) {
+		accounts.remove(account);
+	}
+
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
 
-	public boolean checkExistingAccount(String accountName) {
+	public boolean checkExistingAccount(String accountType) {
 		for (Account a : accounts) {
-			if (a.getAccountName().equals(accountName)) {
+			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public Account getExistingAccount(String accountName) {
+	public Account getExistingAccount(String accountType) {
 		for (Account a : accounts) {
-			if (a.getAccountName().equals(accountName)) {
+			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
 				return a;
 			}
 		}
@@ -62,12 +65,8 @@ public class Customer {
 		return password;
 	}
 
-	public void setAccountLocked(){
-		this.accountLocked = true;
-	}
-
-	public void setUnlockAccount(){
-		this.accountLocked = false;
+	public void setAccountLocked(boolean value){
+		this.accountLocked = value;
 	}
 
 	public boolean isAccountLocked() {
