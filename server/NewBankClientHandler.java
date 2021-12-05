@@ -33,7 +33,6 @@ public class NewBankClientHandler extends Thread {
 				switch (in.readLine()) {
 					case "1":
 
-
 						//If 3 failed login attempts during session, does not allow login
 						if (failedLogInUsers.size()>4) {
 							out.println("There have been too many unsuccessful login attempts, " +
@@ -41,7 +40,7 @@ public class NewBankClientHandler extends Thread {
 							break;
 						}
 
-						while (failedLogInUsers.size()<=5) {
+						while (failedLogInUsers.size()<5) {
 							// Ask for username
 							out.println("Enter Username:");
 							String userName = in.readLine();
@@ -75,12 +74,11 @@ public class NewBankClientHandler extends Thread {
 							} else {
 								out.println("Loading...\n");
 								out.println("Log In Failed.\n");
-								//adds the string of username to failed login list.
 
+								//adds the string of username to failed login list.
 								failedLogInUsers.add(userName);
 								Map logInFrequencyMap = userLogInFrequency();
 								lockUsers(logInFrequencyMap, 3);
-
 							}
 						}
 
@@ -164,14 +162,14 @@ public class NewBankClientHandler extends Thread {
 
 	private void lockUsers(Map<String, Integer> countMap, int maxAttempts){
 
-		//iterates through the map of login frequencies, and for each username checks if the number of logins >maxAttempts
-		//if yes, and the account is not already locked, it locks it and prints message
+		//iterates through the map of login frequencies
+		//if user login number>maxAttempts and the account is not already locked, it locks it and prints message
 		for (Map.Entry<String, Integer> set : countMap.entrySet()){
 			if (set.getValue() >= maxAttempts){
 				if (NewBank.getBank().getCustomers().containsKey(set.getKey()) &&
 						!isAccountLocked(set.getKey())) {
 					NewBank.getBank().getCustomer(set.getKey()).setAccountLocked(true);
-					out.println("The account: " + set.getKey() + " has been locked.");
+					out.println("The account: " + set.getKey() + " has been locked.\n");
 				}
 			}
 		}
