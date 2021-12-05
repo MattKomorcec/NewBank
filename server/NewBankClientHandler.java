@@ -41,7 +41,7 @@ public class NewBankClientHandler extends Thread {
 							break;
 						}
 
-						while (failedLogInUsers.size()<5) {
+						while (failedLogInUsers.size()<=5) {
 							// Ask for username
 							out.println("Enter Username:");
 							String userName = in.readLine();
