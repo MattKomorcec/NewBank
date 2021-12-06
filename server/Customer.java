@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Customer {
 
-	private boolean accountLocked = false;
+	private boolean accountLocked;
 
 	private ArrayList<Account> accounts;
 	String username;
@@ -66,7 +66,7 @@ public class Customer {
 	}
 
 	public void setAccountLocked(boolean value){
-		this.accountLocked = value;
+		accountLocked = value;
 	}
 
 	public boolean isAccountLocked() {
