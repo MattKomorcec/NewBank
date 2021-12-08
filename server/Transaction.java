@@ -156,15 +156,14 @@ public class Transaction {
             if (customer.checkExistingAccount(input)) {
                 valid = true;
                 return customer.getExistingAccount(input);
-            }
-            else {
+            } else {
                 newBankClientHandler.sendOutput("Invalid input. Please try again:");
             }
         }
         return null;
     }
 
-    private Customer getToCustomer(Customer customer,NewBankClientHandler newBankClientHandler) {
+    private Customer getToCustomer(Customer customer, NewBankClientHandler newBankClientHandler) {
         String input;
         Customer payee;
         valid = false;
@@ -203,8 +202,7 @@ public class Transaction {
             if (toCustomer.checkExistingAccount(input)) {
                 valid = true;
                 return toCustomer.getExistingAccount(input);
-            }
-            else {
+            } else {
                 newBankClientHandler.sendOutput("Invalid input. Please try again:");
             }
         }
@@ -224,8 +222,7 @@ public class Transaction {
         // Checking if input string is of double format.
         try {
             Double.parseDouble(s);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
         return true;

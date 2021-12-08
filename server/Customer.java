@@ -6,9 +6,9 @@ public class Customer {
 
 	private boolean accountLocked;
 
-	private ArrayList<Account> accounts;
-	String username;
-	String password;
+    String username;
+    String password;
+    private ArrayList<Account> accounts;
 
 	public Customer(String username, String password) {
 		accounts = new ArrayList<>();
@@ -48,18 +48,18 @@ public class Customer {
 		return false;
 	}
 
-	public Account getExistingAccount(String accountType) {
-		for (Account a : accounts) {
-			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
-				return a;
-			}
-		}
-		return null;
-	}
+    public Account getExistingAccount(String accountType) {
+        for (Account a : accounts) {
+            if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
+                return a;
+            }
+        }
+        return null;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
 	public String getPassword() {
 		return password;

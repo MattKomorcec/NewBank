@@ -19,10 +19,14 @@ public class NewBank {
 		addTestData();
 	}
 
-	private void addTestData() {
-		Customer bhagy = new Customer("Bhagy", "1234");
-		bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
-		customers.put(bhagy.getUsername(), bhagy);
+    public static NewBank getBank() {
+        return bank;
+    }
+
+    private void addTestData() {
+        Customer bhagy = new Customer("Bhagy", "1234");
+        bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
+        customers.put(bhagy.getUsername(), bhagy);
 
 		Customer christina = new Customer("Christina", "1234");
 		christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
@@ -33,53 +37,46 @@ public class NewBank {
 		customers.put(john.getUsername(), john);
 	}
 
-	public static NewBank getBank() {
-		return bank;
-	}
+    public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
+        if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
+            newBankClientHandler.sendOutput("-Username correct");
+            newBankClientHandler.sendOutput("-Password correct");
+            return customers.get(username);
+        } else if (!customers.containsKey(username)) {
+            newBankClientHandler.sendOutput("-Wrong username\n");
+            return null;
+        } else if (!customers.get(username).getPassword().equals(password)) {
+            newBankClientHandler.sendOutput("-Wrong password\n");
+            return null;
+        } else {
+            return null;
+        }
+    }
 
-	public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
-		if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
-			newBankClientHandler.sendOutput("-Username correct");
-			newBankClientHandler.sendOutput("-Password correct");
-			return customers.get(username);
-		}
-		else if (!customers.containsKey(username)){
-			newBankClientHandler.sendOutput("-Wrong username\n");
-			return null;
-		}
-		else if (!customers.get(username).getPassword().equals(password)) {
-			newBankClientHandler.sendOutput("-Wrong password\n");
-			return null;
-		}
-		else {
-			return null;
-		}
-	}
+    // Commands from the NewBank customer are processed in this method.
+    public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
+        if (customers.containsKey(customer.getUsername())) {
+            switch (request) {
+                case "1":
+                    return accountManagement.showMyAccounts(customer, newBankClientHandler);
+                case "2":
+                    return accountManagement.newAccount(customer, newBankClientHandler);
+                case "3":
+                    return transaction.moveFunds(customer, newBankClientHandler);
+                case "4":
+                    return transaction.payFunds(customer, newBankClientHandler);
+                case "5":
+                    return accountManagement.removeAccount(customer, newBankClientHandler);
+                default:
+                    return "FAIL";
+            }
+        }
+        return "FAIL";
+    }
 
-	// Commands from the NewBank customer are processed in this method.
-	public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
-		if (customers.containsKey(customer.getUsername())) {
-			switch (request) {
-				case "1":
-					return accountManagement.showMyAccounts(customer, newBankClientHandler);
-				case "2":
-					return accountManagement.newAccount(customer, newBankClientHandler);
-				case "3":
-					return transaction.moveFunds(customer, newBankClientHandler);
-				case "4":
-					return transaction.payFunds(customer, newBankClientHandler);
-				case "5":
-					return accountManagement.removeAccount(customer,newBankClientHandler);
-				default:
-					return "FAIL";
-			}
-		}
-		return "FAIL";
-	}
-
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
+    public HashMap<String, Customer> getCustomers() {
+        return customers;
+    }
 
 	public String getID(Customer c) {
 		for (Entry<String, Customer> entry : customers.entrySet()) {

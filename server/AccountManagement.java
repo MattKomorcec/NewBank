@@ -48,22 +48,18 @@ public class AccountManagement {
                     accountType = Account.AccountType.MAIN;
                     customer.addAccount(new Account(accountType, 0.0));
                     valid = true;
-                }
-                else if (newAccountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
+                } else if (newAccountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
                     accountType = Account.AccountType.SAVINGS;
                     customer.addAccount(new Account(accountType, 0.0));
                     valid = true;
-                }
-                else if (newAccountType.equalsIgnoreCase(Account.AccountType.INVESTMENTS.toString())) {
+                } else if (newAccountType.equalsIgnoreCase(Account.AccountType.INVESTMENTS.toString())) {
                     accountType = Account.AccountType.INVESTMENTS;
                     customer.addAccount(new Account(accountType, 0.0));
                     valid = true;
-                }
-                else {
+                } else {
                     newBankClientHandler.sendOutput("An appropriate account type must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");
                 }
-            }
-            else {
+            } else {
                 newBankClientHandler.sendOutput("The selected account type already exists. Please try again:");
             }
         }
@@ -71,7 +67,7 @@ public class AccountManagement {
         return newBankClientHandler.printCustomerMenu();
     }
 
-    public String removeAccount (Customer customer, NewBankClientHandler newBankClientHandler) {
+    public String removeAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
 
         ArrayList<Account> existAccounts = customer.getAccounts();
         Transaction transaction = new Transaction();
@@ -79,11 +75,10 @@ public class AccountManagement {
 
         newBankClientHandler.sendOutput("Selected: Remove existing account");
         // Checking if the customer has more than one account types. Minimum one account per customer is needed.
-        if (existAccounts.size() < 2){
+        if (existAccounts.size() < 2) {
             newBankClientHandler.sendOutput("You have only one account under your name. Request cannot be processed any further. Exiting to Customer Menu.");
             return newBankClientHandler.printCustomerMenu();
-        }
-        else {
+        } else {
             newBankClientHandler.sendOutput("Please enter the account type you wish to remove or 'Q' to quit:");
             // Checking if the selected account exist in the Account list.
             selectedAccount = transaction.getMyAccount(customer, newBankClientHandler);
@@ -96,12 +91,11 @@ public class AccountManagement {
             if (selectedAccount.getBalance() != 0) {
                 newBankClientHandler.sendOutput("The selected account cannot be deleted as the outstanding balance is not 0.00. Exiting to Customer Menu.");
                 return newBankClientHandler.printCustomerMenu();
-            }
-            else {
+            } else {
                 customer.removeAccount(selectedAccount);
             }
         }
-        newBankClientHandler.sendOutput("The " + selectedAccount.getAccountType().toString()+  " account is successfully removed.\n");
+        newBankClientHandler.sendOutput("The " + selectedAccount.getAccountType().toString() + " account is successfully removed.\n");
         newBankClientHandler.sendOutput("New accounts' statement:\n");
         newBankClientHandler.sendOutput(customer.accountsToString());
         newBankClientHandler.sendOutput("\nExiting to Customer Menu.");

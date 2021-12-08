@@ -1,13 +1,13 @@
 package newbank.server;
 
-import static org.junit.Assert.*;
-
 import newbank.client.TestClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class AccountManagementTest {
     TestClient client = new TestClient();
