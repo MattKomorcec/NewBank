@@ -1,34 +1,32 @@
 package newbank.server;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class Account {
+    private final AccountType accountType;
+    private double balance;
+    public Account(AccountType accountType, double balance) {
+        this.accountType = accountType;
+        this.balance = balance;
+    }
 
-	private String accountName;
-	enum AccountType {MAIN, SAVINGS, INVESTMENTS};
-	private final AccountType accountType;
-	private double balance;
+    public String toString() {
+        return (accountType + " : £" + balance);
+    }
 
-	public Account(AccountType accountType, double balance) {
-		this.accountType = accountType;
-		this.balance = balance;
-	}
+    public AccountType getAccountType() {
+        return accountType;
+    }
 
-	public String toString() {
-		return (accountType + " : £"+balance);
-	}
+    public double getBalance() {
+        return balance;
+    }
 
-	public AccountType getAccountType() {
-		return accountType;
-	}
+    public void setBalance(double d) {
+        balance = d;
+    }
 
-	public double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(double d) {
-		balance = d;
-	}
+    public enum AccountType {
+        MAIN,
+        SAVINGS,
+        INVESTMENTS
+    }
 }
-

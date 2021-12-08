@@ -5,88 +5,85 @@ import java.util.Map.Entry;
 
 public class NewBank {
 
-	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
+    private static final NewBank bank = new NewBank();
+    private HashMap<String, Customer> customers;
 
-	//Initialising AccountManagement Object
-	private AccountManagement accountManagement = new AccountManagement();
+    //Initialising AccountManagement Object
+    private AccountManagement accountManagement = new AccountManagement();
 
-	// Initialising Transaction Object
-	private Transaction transaction = new Transaction();
+    // Initialising Transaction Object
+    private Transaction transaction = new Transaction();
 
-	private NewBank() {
-		customers = new HashMap<>();
-		addTestData();
-	}
+    private NewBank() {
+        customers = new HashMap<>();
+        addTestData();
+    }
 
-	private void addTestData() {
-		Customer bhagy = new Customer("Bhagy", "1234");
-		bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
-		customers.put(bhagy.getUsername(), bhagy);
+    public static NewBank getBank() {
+        return bank;
+    }
 
-		Customer christina = new Customer("Christina", "1234");
-		christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
-		customers.put(christina.getUsername(), christina);
+    private void addTestData() {
+        Customer bhagy = new Customer("Bhagy", "1234");
+        bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
+        customers.put(bhagy.getUsername(), bhagy);
 
-		Customer john = new Customer("Johh","1234");
-		john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
-		customers.put(john.getUsername(), john);
-	}
+        Customer christina = new Customer("Christina", "1234");
+        christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
+        customers.put(christina.getUsername(), christina);
 
-	public static NewBank getBank() {
-		return bank;
-	}
+        Customer john = new Customer("Johh", "1234");
+        john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
+        customers.put(john.getUsername(), john);
+    }
 
-	public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
-		if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
-			newBankClientHandler.sendOutput("-Username correct");
-			newBankClientHandler.sendOutput("-Password correct");
-			return customers.get(username);
-		}
-		else if (!customers.containsKey(username)){
-			newBankClientHandler.sendOutput("-Wrong username\n");
-			return null;
-		}
-		else if (!customers.get(username).getPassword().equals(password)) {
-			newBankClientHandler.sendOutput("-Wrong password\n");
-			return null;
-		}
-		else {
-			return null;
-		}
-	}
+    public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
+        if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
+            newBankClientHandler.sendOutput("-Username correct");
+            newBankClientHandler.sendOutput("-Password correct");
+            return customers.get(username);
+        } else if (!customers.containsKey(username)) {
+            newBankClientHandler.sendOutput("-Wrong username\n");
+            return null;
+        } else if (!customers.get(username).getPassword().equals(password)) {
+            newBankClientHandler.sendOutput("-Wrong password\n");
+            return null;
+        } else {
+            return null;
+        }
+    }
 
-	// Commands from the NewBank customer are processed in this method.
-	public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
-		if (customers.containsKey(customer.getUsername())) {
-			switch (request) {
-				case "1":
-					return accountManagement.showMyAccounts(customer, newBankClientHandler);
-				case "2":
-					return accountManagement.newAccount(customer, newBankClientHandler);
-				case "3":
-					return transaction.moveFunds(customer, newBankClientHandler);
-				case "4":
-					return transaction.payFunds(customer, newBankClientHandler);
-				case "5":
-					return accountManagement.removeAccount(customer,newBankClientHandler);
-				default:
-					return "FAIL";
-			}
-		}
-		return "FAIL";
-	}
+    // Commands from the NewBank customer are processed in this method.
+    public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
+        if (customers.containsKey(customer.getUsername())) {
+            switch (request) {
+                case "1":
+                    return accountManagement.showMyAccounts(customer, newBankClientHandler);
+                case "2":
+                    return accountManagement.newAccount(customer, newBankClientHandler);
+                case "3":
+                    return transaction.moveFunds(customer, newBankClientHandler);
+                case "4":
+                    return transaction.payFunds(customer, newBankClientHandler);
+                case "5":
+                    return accountManagement.removeAccount(customer, newBankClientHandler);
+                default:
+                    return "FAIL";
+            }
+        }
+        return "FAIL";
+    }
 
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
+    public HashMap<String, Customer> getCustomers() {
+        return customers;
+    }
 
-	public String getID(Customer c) {
-		for (Entry<String, Customer> entry : customers.entrySet()) {
-			if (entry.getValue().equals(c)) {
-				return entry.getKey();
-			}
-		}
-		return "";
-	}
+    public String getID(Customer c) {
+        for (Entry<String, Customer> entry : customers.entrySet()) {
+            if (entry.getValue().equals(c)) {
+                return entry.getKey();
+            }
+        }
+        return "";
+    }
 }

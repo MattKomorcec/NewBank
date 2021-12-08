@@ -1,8 +1,5 @@
 package newbank.server;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,9 +11,9 @@ import java.util.Scanner;
 public class UserRegistration {
 
     private final Scanner sc = new Scanner(System.in);
-    private final int ACCOUNT_LOCKED_INITIAL = 0; // 0 - false, 1 - true
+    private final Database database = new Database();
 
-    public UserRegistration newUser() throws SQLException {
+    public void newUser() throws SQLException {
         String UserFullname = getNameFromUser();
         String UserDob = getDateFromUser();
         String username = getUsername();
@@ -26,41 +23,17 @@ public class UserRegistration {
         int UserBalance = getNewUserBalance();
         String UserSecretQuestion = getUserSecretQuestion();
 
-        Connection conn = null;
-        try {
-            String url = "jdbc:sqlite:database.db";
-            conn = DriverManager.getConnection(url);
-            String addNewUser = "INSERT INTO users(dob, username, password, account_number, sortcode, balance, secret_answer, account_locked, full_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Integer userId = database.createUser(UserDob, username, UserPassword, UserSecretQuestion, UserFullname);
 
-            // New values passed to db.
-            PreparedStatement updateUserdb = conn.prepareStatement(addNewUser);
-
-            updateUserdb.setString(1, UserDob);
-            updateUserdb.setString(2, username);
-            updateUserdb.setString(3, UserPassword);
-            updateUserdb.setString(4, UserAccountNumber);
-            updateUserdb.setString(5, UserSortcode);
-            updateUserdb.setInt(6, UserBalance);
-            updateUserdb.setString(7, UserSecretQuestion);
-            updateUserdb.setInt(8, ACCOUNT_LOCKED_INITIAL);
-            updateUserdb.setString(9, UserFullname);
-            updateUserdb.executeUpdate();
-
-            System.out.println("User account successfully created, you may now login.");
-
-            conn.commit();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+        // User was created, now create an account
+        if (userId != null) {
+            boolean accountCreated = database.createAccount(UserAccountNumber, Account.AccountType.MAIN, UserSortcode, UserBalance, userId);
+            if (accountCreated) {
+                System.out.println("User account successfully created, you may now login.");
+                return;
             }
         }
-        return null;
+        System.out.println("There was an error, please try again later.");
     }
 
     private String getNameFromUser() {
@@ -274,73 +247,71 @@ public class UserRegistration {
                 inputCorrect = false;
             }
         }
-            while (!inputCorrect) ;
-            do {
-                System.out.print("\nIs this correct (Y/N)?: ");
-                response = sc.nextLine().toUpperCase();
-                if (response.equals("N")) {
-                    System.out.print("Ok,what would you like the update opening balance to be?: ");
-                    userOpenBalance = sc.nextLine();
-                    try {
-                        newBalance = Integer.parseInt(userOpenBalance);
-                        System.out.println("New Account Balance: £" + newBalance);
-                    } catch (Exception e) {
-                        System.out.println("\nThis is not a correct value input");
-                    }
-                    System.out.print("\nIs this correct (Y/N)?: £" + userOpenBalance);
-                    response = sc.nextLine().toUpperCase();
+        while (!inputCorrect);
+        do {
+            System.out.print("\nIs this correct (Y/N)?: ");
+            response = sc.nextLine().toUpperCase();
+            if (response.equals("N")) {
+                System.out.print("Ok,what would you like the update opening balance to be?: ");
+                userOpenBalance = sc.nextLine();
+                try {
+                    newBalance = Integer.parseInt(userOpenBalance);
+                    System.out.println("New Account Balance: £" + newBalance);
+                } catch (Exception e) {
+                    System.out.println("\nThis is not a correct value input");
                 }
-            } while (!response.equals("Y"));
-
-            return newBalance;
-        }
-
-
-
-        private String getUserSecretQuestion () {
-            String secretQuestionAnswer;
-            String response;
-            System.out.println("\n");
-            System.out.println("\nPlease now answer the following secret question");
-            System.out.println("\nWhat was your first pets name?: ");
-            secretQuestionAnswer = sc.nextLine();
-            System.out.println("The secret answer is set to: " + secretQuestionAnswer);
-            do {
-                System.out.print("\nIs this correct (Y/N)?: ");
+                System.out.print("\nIs this correct (Y/N)?: £" + userOpenBalance);
                 response = sc.nextLine().toUpperCase();
-                if (response.equals("N")) {
-                    System.out.print("Ok, you would like to change the secret answer to?: ");
-                    secretQuestionAnswer = sc.nextLine();
-                    System.out.print("\nThe secret answer associated with this account will be:" + " " + secretQuestionAnswer);
-                    System.out.print("\nIs this correct (Y/N)?: ");
-                    response = sc.nextLine().toUpperCase();
-                }
-            } while (!response.equals("Y"));
-            return secretQuestionAnswer;
-        }
-
-        private boolean getUserCheckHuman () {
-            //No condition or iterations as checks once to ensure the user is human.
-            //Generates a random number between 1-10 for each multiplication value.
-            int answerToQuestion;
-            int userAnswer;
-            int min = 1;
-            int max = 10;
-            int number1 = (int) Math.floor(Math.random() * (max - min + 1) + min);
-            int number2 = (int) Math.floor(Math.random() * (max - min + 1) + min);
-            answerToQuestion = number1 * number2;
-
-            System.out.println("\nPlease now complete the following question");
-            System.out.println("What is " + number1 + " x " + number2 + " = ");
-            userAnswer = sc.nextInt();
-
-            if (userAnswer == answerToQuestion) {
-                System.out.println("\nNew User passed security check");
-                System.out.println("\nUser now registered");
-                System.out.println("\nYou can now log in to your NewBank account");
-                return true;
             }
-            System.out.println("\nYou have failed the security check, and cannot register an account with us today");
-            return false;
-        }
+        } while (!response.equals("Y"));
+
+        return newBalance;
     }
+
+    private String getUserSecretQuestion() {
+        String secretQuestionAnswer;
+        String response;
+        System.out.println("\n");
+        System.out.println("\nPlease now answer the following secret question");
+        System.out.println("\nWhat was your first pets name?: ");
+        secretQuestionAnswer = sc.nextLine();
+        System.out.println("The secret answer is set to: " + secretQuestionAnswer);
+        do {
+            System.out.print("\nIs this correct (Y/N)?: ");
+            response = sc.nextLine().toUpperCase();
+            if (response.equals("N")) {
+                System.out.print("Ok, you would like to change the secret answer to?: ");
+                secretQuestionAnswer = sc.nextLine();
+                System.out.print("\nThe secret answer associated with this account will be:" + " " + secretQuestionAnswer);
+                System.out.print("\nIs this correct (Y/N)?: ");
+                response = sc.nextLine().toUpperCase();
+            }
+        } while (!response.equals("Y"));
+        return secretQuestionAnswer;
+    }
+
+    private boolean getUserCheckHuman() {
+        //No condition or iterations as checks once to ensure the user is human.
+        //Generates a random number between 1-10 for each multiplication value.
+        int answerToQuestion;
+        int userAnswer;
+        int min = 1;
+        int max = 10;
+        int number1 = (int) Math.floor(Math.random() * (max - min + 1) + min);
+        int number2 = (int) Math.floor(Math.random() * (max - min + 1) + min);
+        answerToQuestion = number1 * number2;
+
+        System.out.println("\nPlease now complete the following question");
+        System.out.println("What is " + number1 + " x " + number2 + " = ");
+        userAnswer = sc.nextInt();
+
+        if (userAnswer == answerToQuestion) {
+            System.out.println("\nNew User passed security check");
+            System.out.println("\nUser now registered");
+            System.out.println("\nYou can now log in to your NewBank account");
+            return true;
+        }
+        System.out.println("\nYou have failed the security check, and cannot register an account with us today");
+        return false;
+    }
+}
