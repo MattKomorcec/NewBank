@@ -9,6 +9,7 @@ public class Customer {
     String username;
     String password;
     private ArrayList<Account> accounts;
+    Database database = new Database();
 
 	public Customer(String username, String password) {
 		accounts = new ArrayList<>();
@@ -65,8 +66,14 @@ public class Customer {
 		return password;
 	}
 
-	public void setAccountLocked(boolean value){
-		accountLocked = value;
+	public void setAccountLocked(boolean bool){
+		accountLocked = bool;
+		int value = (bool) ? 1 : 0;
+		try {
+			database.setLockAccount(username, value);
+		}catch (Exception e){
+			System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+		}
 	}
 
 	public boolean isAccountLocked() {

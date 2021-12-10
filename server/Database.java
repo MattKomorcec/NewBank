@@ -169,4 +169,36 @@ public class Database {
             }
         }
     }
+
+    public void setLockAccount(String username, int value) throws SQLException {
+        try {
+            // Opens a connection to the database
+            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+            conn.setAutoCommit(false);
+
+            String update = "UPDATE users SET account_locked = ? WHERE username = ? ";
+            PreparedStatement statement = conn.prepareStatement(update);
+
+            statement.setInt(1, value);
+            statement.setString(2, username);
+
+            statement.executeUpdate();
+            conn.commit();
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        } finally {
+            // Closes the database connection if it's not closed already
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            }
+        }
+    }
 }
