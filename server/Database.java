@@ -184,6 +184,7 @@ public class Database {
 
             statement.executeUpdate();
             conn.commit();
+            statement.close();
 
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
@@ -195,10 +196,11 @@ public class Database {
                 if (conn != null) {
                     conn.close();
                 }
-            } catch (SQLException e) {
-                conn.rollback();
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+                } catch(SQLException e){
+                    conn.rollback();
+                    System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+                }
             }
         }
     }
-}
+

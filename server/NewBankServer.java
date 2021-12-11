@@ -22,7 +22,7 @@ public class NewBankServer extends Thread {
         //List<Customer> results = db.getAllCustomers();
 
         String user = "matijak";
-        db.setLockAccount(user, 1);
+        db.setLockAccount(user, 0);
         //UserRegistration ur = new UserRegistration();
         //needed to call user reg class.
         //ur.newUser();
