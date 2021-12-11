@@ -9,6 +9,7 @@ public class Transaction {
     Account fromAccount;
     Account toAccount;
     Customer toCustomer;
+    Database db = new Database();
 
     // Moving funds between personal accounts.
     public String moveFunds(Customer customer, NewBankClientHandler newBankClientHandler) {

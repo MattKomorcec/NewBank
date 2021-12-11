@@ -176,7 +176,75 @@ public class Database {
         }
     }
 
+    public void updateBalance(String account_number, int balance) throws SQLException {
+        try{
+            openConnection();
 
+            String update = "UPDATE accounts SET balance = ? WHERE account_number = ? ";
+            PreparedStatement statement = conn.prepareStatement(update);
+
+            statement.setInt(1, balance);
+            statement.setString(2, account_number);
+
+            statement.executeUpdate();
+            conn.commit();
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        } finally {
+            closeConnection();
+        }
+    }
+
+    public int getUserID(String username) throws SQLException {
+        int id = 0;
+        try {
+            openConnection();
+
+            String query = "SELECT id FROM users WHERE username = ? ";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            statement.setString(1, username);
+            ResultSet result = statement.executeQuery();
+            id = result.getInt("id");
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        } finally {
+            closeConnection();
+        }
+        return id;
+    }
+
+    public boolean checkColumnContainsValue(int id, String columnName, String valueToFind) throws SQLException {
+
+        boolean exist = false;
+        try{
+            openConnection();
+
+            String query = "SELECT EXISTS(SELECT * FROM accounts WHERE (accounts.id = ? AND ? = ?))";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            statement.setInt(1, id);
+            statement.setString(2, columnName);
+            statement.setString(3, valueToFind);
+
+            ResultSet result = statement.executeQuery();
+            exist = result.getBoolean(1);
+
+        }catch (Exception e){
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        }finally{
+            closeConnection();
+        }
+        return exist;
+    }
 
     private void openConnection() throws SQLException {
         // Opens a connection to the database

@@ -37,7 +37,8 @@ public class NewBank {
 		customers.put(john.getUsername(), john);
 
         Customer matija = new Customer("matijak","Matijak1");
-        matija.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
+        matija.addAccount(new Account(Account.AccountType.MAIN, 1230.0));
+        matija.addAccount(new Account(Account.AccountType.SAVINGS, 1000.0));
         customers.put(matija.getUsername(), matija);
 	}
 
