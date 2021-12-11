@@ -19,6 +19,7 @@ public class Database {
         try {
             // Opens a connection to the database
             conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+            conn.setAutoCommit(false);
 
             // SQL query that gets all entries from the users table
             String query = "SELECT * FROM users";

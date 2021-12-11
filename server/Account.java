@@ -3,6 +3,7 @@ package newbank.server;
 public class Account {
     private final AccountType accountType;
     private double balance;
+
     public Account(AccountType accountType, double balance) {
         this.accountType = accountType;
         this.balance = balance;

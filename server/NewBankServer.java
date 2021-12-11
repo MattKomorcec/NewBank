@@ -17,10 +17,6 @@ public class NewBankServer extends Thread {
     public static void main(String[] args) throws IOException, SQLException {
         new NewBankServer(14005).start();
 
-        // This code just demonstrates how to use the Database class -> can be removed at some point
-        Database db = new Database();
-        List<Customer> results = db.getAllCustomers();
-
         UserRegistration ur = new UserRegistration();
         //needed to call user reg class.
         ur.newUser();
