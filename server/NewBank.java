@@ -1,12 +1,15 @@
 package newbank.server;
 
+import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
+    private Database db = new Database();
+	private List<Customer> customers;
 
 	//Initialising AccountManagement Object
 	private AccountManagement accountManagement = new AccountManagement();
@@ -14,15 +17,16 @@ public class NewBank {
 	// Initialising Transaction Object
 	private Transaction transaction = new Transaction();
 
-	private NewBank() {
-		customers = new HashMap<>();
-		addTestData();
+	private NewBank() throws SQLException {
+		customers = db.getAllCustomers();
+		//addTestData();
 	}
 
     public static NewBank getBank() {
         return bank;
     }
 
+    /*
     private void addTestData() {
         Customer bhagy = new Customer("Bhagy", "1234");
         bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
@@ -41,6 +45,7 @@ public class NewBank {
         matija.addAccount(new Account(Account.AccountType.SAVINGS, 1000.0));
         customers.put(matija.getUsername(), matija);
 	}
+	*/
 
     public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
         if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {

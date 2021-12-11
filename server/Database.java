@@ -8,6 +8,7 @@ public class Database {
     public static final String DB_CONNECTION_STRING = "jdbc:sqlite:database.db";
     private final boolean debug = false;
     private Connection conn = null;
+    ArrayList<Customer> customers = new ArrayList<>();
 
     /**
      * Returns all customers from the database.
@@ -16,9 +17,10 @@ public class Database {
      * @throws SQLException Thrown exception
      */
     public List<Customer> getAllCustomers() throws SQLException {
+
         try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+
+            openConnection();
 
             // SQL query that gets all entries from the users table
             String query = "SELECT * FROM users";
@@ -27,38 +29,81 @@ public class Database {
             // Executes the query, and retrieves the results
             ResultSet results = statement.executeQuery();
 
-            ArrayList<Customer> customers = new ArrayList<>();
-
             while (results.next()) {
                 // Gets all the values from the results of running the query
                 int id = results.getInt("id");
-                String name = results.getString("name");
-                int accountNumber = results.getInt("account_number");
+                String dob = results.getString("dob");
+                String username = results.getString("username");
+                String password = results.getString("password");
+                String secretAnswer = results.getString("secret_answer");
+                boolean accountLocked = results.getBoolean("account_locked");
+                String fullName = results.getString("full_name");
 
                 // Creates an object of a customer class, using the retrieved values
-                Customer customer = new Customer(name, String.valueOf(accountNumber));
+                Customer customer = new Customer(id, dob, username, password, secretAnswer, accountLocked, fullName);
 
                 customers.add(customer);
 
+                // Adds an ArrayList of the customer's accounts
+                customer.setAccounts(getCustomerAccounts(id));
+
                 if (debug) {
-                    System.out.println(id + ". " + name + ", " + accountNumber);
+                    System.out.println(id + ". " + username);
                 }
             }
 
-            return customers;
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            return null;
+
+        } finally {
+            closeConnection();
+        }
+
+        return customers;
+    }
+
+    // Returns an ArrayList of Account objects for a given user ID
+    public ArrayList<Account> getCustomerAccounts(int userNumber) throws SQLException {
+
+        ArrayList<Account> accounts = new ArrayList<>();
+        try {
+
+            openConnection();
+
+            // SQL query that gets all entries from the users table
+            String query = "SELECT * FROM accounts WHERE user_id = ? ";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, userNumber);
+
+            // Executes the query, and retrieves the results
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                // Gets all the values from the results of running the query
+                results.getInt("id");
+                String accountNumber = results.getString("account_number");
+                String accountType = results.getString("account_type");
+                int balance = results.getInt("balance");
+                String sortCode = results.getString("sortcode");
+                int userID = results.getInt("user_id");
+
+                // Creates an object of a customer class, using the retrieved values
+                Account account = new Account(accountNumber, accountType, balance, sortCode, userID);
+                accounts.add(account);
+
+                if (debug) {
+                    System.out.println(userID + ". " + accountNumber);
+                }
+            }
+
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             return null;
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
+            closeConnection();
         }
+        return accounts;
     }
 
     /**
