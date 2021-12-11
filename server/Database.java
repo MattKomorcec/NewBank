@@ -76,9 +76,8 @@ public class Database {
         try {
             // 0 - false, 1 - true
             int ACCOUNT_LOCKED_INITIAL = 0;
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             String addNewUser = "INSERT INTO users(dob, username, password, secret_answer, account_locked, full_name) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -110,15 +109,7 @@ public class Database {
             conn.rollback();
             return null;
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
+            closeConnection();
         }
     }
 
@@ -135,9 +126,8 @@ public class Database {
      */
     public boolean createAccount(String accountNumber, Account.AccountType accountType, String sortCode, int balance, int userId) throws SQLException {
         try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             String query = "INSERT INTO accounts(account_number, account_type, balance, sortcode, user_id) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(query);
@@ -158,23 +148,15 @@ public class Database {
             conn.rollback();
             return false;
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
+            closeConnection();
         }
     }
 
+    //sets the account lock status given the unique username and either 0 (unlocked) or 1 (locked)
     public void setLockAccount(String username, int value) throws SQLException {
         try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             String update = "UPDATE users SET account_locked = ? WHERE username = ? ";
             PreparedStatement statement = conn.prepareStatement(update);
@@ -184,23 +166,34 @@ public class Database {
 
             statement.executeUpdate();
             conn.commit();
-            statement.close();
 
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             conn.rollback();
 
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-                } catch(SQLException e){
-                    conn.rollback();
-                    System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-                }
-            }
+            closeConnection();
         }
     }
 
+
+
+    private void openConnection() throws SQLException {
+        // Opens a connection to the database
+        conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+        conn.setAutoCommit(false);
+    }
+
+    private void closeConnection() throws SQLException{
+        // Closes the database connection if it's not closed already
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            conn.rollback();
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+        }
+    }
+
+}

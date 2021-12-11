@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS users
     secret_answer  VARCHAR(50),
     account_locked INTEGER      NOT NULL CHECK (account_locked IN (0, 1)) DEFAULT 0,
     full_name      VARCHAR(100) NOT NULL,
-    CONSTRAINT 'id_unique' UNIQUE ('id')
 );
 
 CREATE TABLE IF NOT EXISTS accounts

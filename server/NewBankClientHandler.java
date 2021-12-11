@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -78,7 +77,7 @@ public class NewBankClientHandler extends Thread {
 
 								//adds the string of username to failed login list.
 								failedLogInUsers.add(userName);
-								Map logInFrequencyMap = userLogInFrequency();
+								Map<String, Integer> logInFrequencyMap = userLogInFrequency();
 								lockUsers(logInFrequencyMap, 3);
 							}
 						}
@@ -108,8 +107,7 @@ public class NewBankClientHandler extends Thread {
 	public String getInput() {
 
 		try {
-			String input = in.readLine();
-			return input;
+			return in.readLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -169,7 +167,7 @@ public class NewBankClientHandler extends Thread {
 
 			Integer userAttempts = set.getValue();
 			String customer = set.getKey();
-			HashMap customers = NewBank.getBank().getCustomers();
+			HashMap<String, Customer> customers = NewBank.getBank().getCustomers();
 
 			if (userAttempts >= maxAttempts){
 				if (customers.containsKey(customer) &&

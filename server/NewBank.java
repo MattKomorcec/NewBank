@@ -35,6 +35,10 @@ public class NewBank {
 		Customer john = new Customer("Johh","1234");
 		john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
 		customers.put(john.getUsername(), john);
+
+        Customer matija = new Customer("matijak","Matijak1");
+        matija.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
+        customers.put(matija.getUsername(), matija);
 	}
 
     public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
