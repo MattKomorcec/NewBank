@@ -176,15 +176,16 @@ public class Database {
         }
     }
 
-    public void updateBalance(String account_number, int balance) throws SQLException {
+    public void updateBalance(int id, String accountType, int balance) throws SQLException {
         try{
             openConnection();
 
-            String update = "UPDATE accounts SET balance = ? WHERE account_number = ? ";
+            String update = "UPDATE accounts SET balance = ? WHERE user_id = ? AND account_type = ? ";
             PreparedStatement statement = conn.prepareStatement(update);
 
             statement.setInt(1, balance);
-            statement.setString(2, account_number);
+            statement.setInt(2, id);
+            statement.setString(3, accountType);
 
             statement.executeUpdate();
             conn.commit();

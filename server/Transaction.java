@@ -51,7 +51,7 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Completing transfer.
-        transferFunds(amount, fromAccount, toAccount);
+        transferFunds(customer, amount, fromAccount, toAccount);
         // Printing accounts and balance.
         newBankClientHandler.sendOutput("Transfer was successful. New accounts' statement:");
         newBankClientHandler.sendOutput(customer.accountsToString());
@@ -106,7 +106,7 @@ public class Transaction {
             newBankClientHandler.sendOutput("\nExiting to Customer Menu");
             return newBankClientHandler.printCustomerMenu();
         }
-        transferFunds(amount, fromAccount, toAccount);
+        transferFunds(customer, amount, fromAccount, toAccount);
         // Printing the updated fromAccount balance.
         newBankClientHandler.sendOutput("Payment was successful. New accounts' statement:");
         newBankClientHandler.sendOutput(customer.accountsToString());
@@ -210,13 +210,24 @@ public class Transaction {
         return null;
     }
 
-    public void transferFunds(double amount, Account fromAccount, Account toAccount) {
+    public void transferFunds(Customer customer, double amount, Account fromAccount, Account toAccount) {
         // Subtracting amount from the 'from' account.
         double fromBalance = fromAccount.getBalance();
         fromAccount.setBalance(fromBalance - amount);
+
         // Adding amount to the 'to' account.
         double toBalance = toAccount.getBalance();
         toAccount.setBalance(toBalance + amount);
+
+        //update database with above changes.
+        try {
+            int userID = db.getUserID(customer.getUsername());
+            db.updateBalance(userID, fromAccount.getAccountType().toString(), (int) (fromBalance-amount));
+            db.updateBalance(userID, toAccount.getAccountType().toString(), (int) (toBalance + amount));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean checkDouble(String s) {
