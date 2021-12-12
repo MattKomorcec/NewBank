@@ -86,8 +86,6 @@ public class Database {
 
                 Account account = new Account(accountNumber, accountType, balance, sortCode, userID);
                 accounts.add(account);
-                System.out.println(accountNumber);
-                System.out.println(balance);
 
                 if (debug) {
                     System.out.println(userID + ". " + accountNumber);
