@@ -89,15 +89,13 @@ public class Customer {
 		return accountLocked;
 	}
 
-	public void setAccountLocked(boolean bool){
-		accountLocked = bool;
-		int value = (bool) ? 1 : 0;
+	public void setAccountLocked(boolean locked){
+		accountLocked = locked;
+		int value = (locked) ? 1 : 0;
 		try {
 			database.setLockAccount(username, value);
 		}catch (Exception e){
-			System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+			System.out.println("EXCEPTION!! Customer.java: " + e.getMessage());
 		}
 	}
-
-
 }

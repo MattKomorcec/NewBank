@@ -224,10 +224,6 @@ public class Transaction {
         //update database with above changes. Note this is not yet updated for ToCustomer
         try {
             int userID = customer.getID();
-            System.out.println(userID);
-            System.out.println(amount);
-            System.out.println(fromAccount.getAccountType().toString());
-            System.out.println(toAccount.getAccountType().toString());
             db.updateBalance(userID, fromAccount.getAccountType().toString(),fromBalance - amount);
             db.updateBalance(userID, toAccount.getAccountType().toString(), toBalance + amount);
 
@@ -248,7 +244,7 @@ public class Transaction {
 
     // Returning true if there are sufficient funds, else false.
     private boolean checkSufficientFunds(int amount, Account fromAccount) {
-        return !((fromAccount.getBalance() - amount) < 0);
+        return (fromAccount.getBalance() - amount) > 0;
     }
 
     // Returning true if argument is negative.

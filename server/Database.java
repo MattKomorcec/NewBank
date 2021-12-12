@@ -78,14 +78,12 @@ public class Database {
 
             while (results.next()) {
                 // Gets all the values from the results of running the query
-                results.getInt("id");
                 String accountNumber = results.getString("account_number");
                 String accountType = results.getString("account_type");
                 int balance = results.getInt("balance");
                 String sortCode = results.getString("sortcode");
                 int userID = results.getInt("user_id");
 
-                // Creates an object of a customer class, using the retrieved values
                 Account account = new Account(accountNumber, accountType, balance, sortCode, userID);
                 accounts.add(account);
                 System.out.println(accountNumber);
