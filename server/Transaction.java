@@ -45,7 +45,7 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
-        confirmation = String.format("Transfer: £%.2d\nFrom: %s\nTo: %s",
+        confirmation = String.format("Transfer: £%d\nFrom: %s\nTo: %s",
                 amount, fromAccount.getAccountType(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
         if (!getYN(newBankClientHandler)) {
@@ -100,7 +100,7 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
-        confirmation = String.format("Transfer: £%.2d\nFrom: %s\nTo: %s %s",
+        confirmation = String.format("Transfer: £%d\nFrom: %s\nTo: %s %s",
                 amount, fromAccount.getAccountType(),
                 toCustomer.getUsername(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
@@ -221,9 +221,13 @@ public class Transaction {
         int toBalance = toAccount.getBalance();
         toAccount.setBalance(toBalance + amount);
 
-        //update database with above changes.
+        //update database with above changes. Note this is not yet updated for ToCustomer
         try {
-            int userID = db.getUserID(customer.getUsername());
+            int userID = customer.getID();
+            System.out.println(userID);
+            System.out.println(amount);
+            System.out.println(fromAccount.getAccountType().toString());
+            System.out.println(toAccount.getAccountType().toString());
             db.updateBalance(userID, fromAccount.getAccountType().toString(),fromBalance - amount);
             db.updateBalance(userID, toAccount.getAccountType().toString(), toBalance + amount);
 

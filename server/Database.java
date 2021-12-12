@@ -68,8 +68,6 @@ public class Database {
         ArrayList<Account> accounts = new ArrayList<>();
         try {
 
-            openConnection();
-
             // SQL query that gets all entries from the users table
             String query = "SELECT * FROM accounts WHERE user_id = ? ";
             PreparedStatement statement = conn.prepareStatement(query);
@@ -90,6 +88,8 @@ public class Database {
                 // Creates an object of a customer class, using the retrieved values
                 Account account = new Account(accountNumber, accountType, balance, sortCode, userID);
                 accounts.add(account);
+                System.out.println(accountNumber);
+                System.out.println(balance);
 
                 if (debug) {
                     System.out.println(userID + ". " + accountNumber);
@@ -99,8 +99,6 @@ public class Database {
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             return null;
-        } finally {
-            closeConnection();
         }
         return accounts;
     }
@@ -241,28 +239,6 @@ public class Database {
         } finally {
             closeConnection();
         }
-    }
-
-    public int getUserID(String username) throws SQLException {
-        int id = 0;
-        try {
-            openConnection();
-
-            String query = "SELECT id FROM users WHERE username = ? ";
-            PreparedStatement statement = conn.prepareStatement(query);
-
-            statement.setString(1, username);
-            ResultSet result = statement.executeQuery();
-            id = result.getInt("id");
-
-        } catch (Exception e) {
-            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            conn.rollback();
-
-        } finally {
-            closeConnection();
-        }
-        return id;
     }
 
     public boolean checkColumnContainsValue(int id, String columnName, String valueToFind) throws SQLException {
