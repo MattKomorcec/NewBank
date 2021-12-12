@@ -77,16 +77,5 @@ public class NewBank {
     public List<Customer> getCustomers() {
         return customers;
     }
-/*
-	public String getID(Customer c) {
-		for (Entry<String, Customer> entry : customers.entrySet()) {
-			if (entry.getValue().equals(c)) {
-				return entry.getKey();
-			}
-		}
-		return "";
-	}
-
- */
 
 }
