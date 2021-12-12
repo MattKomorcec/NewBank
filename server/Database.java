@@ -17,7 +17,6 @@ public class Database {
      * @throws SQLException Thrown exception
      */
     public List<Customer> getAllCustomers() throws SQLException {
-
         try {
 
             openConnection();
@@ -309,5 +308,4 @@ public class Database {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
         }
     }
-
 }

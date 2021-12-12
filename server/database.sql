@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS accounts
 (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     account_number VARCHAR(20) NOT NULL UNIQUE,
-    account_type   VARCHAR(11) NOT NULL UNIQUE,
+    account_type   VARCHAR(11) NOT NULL,
     balance        INTEGER     NOT NULL,
     sortcode       VARCHAR(20) NOT NULL UNIQUE,
     user_id        INTEGER     NOT NULL,
@@ -21,10 +21,8 @@ CREATE TABLE IF NOT EXISTS accounts
         REFERENCES users (id)
 );
 
-SELECT *
-FROM accounts;
-SELECT *
-FROM users;
+SELECT * FROM accounts;
+SELECT * FROM users;
 
 DROP TABLE users;
 DROP TABLE accounts;
