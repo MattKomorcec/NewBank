@@ -1,10 +1,12 @@
 package newbank.server;
 
+import static java.lang.Integer.parseInt;
+
 public class Transaction {
 
     String input = "";
     String confirmation = "";
-    double amount = 0.0;
+    int amount = 0;
     boolean valid = false;
     Account fromAccount;
     Account toAccount;
@@ -43,7 +45,7 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
-        confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s",
+        confirmation = String.format("Transfer: £%.2d\nFrom: %s\nTo: %s",
                 amount, fromAccount.getAccountType(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
         if (!getYN(newBankClientHandler)) {
@@ -77,8 +79,8 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Getting user's input customer to transfer to.
-        newBankClientHandler.sendOutput("Please enter name of payee or 'Q' to quit:");
-        toCustomer = getToCustomer(customer, newBankClientHandler);
+        newBankClientHandler.sendOutput("Please enter payee username or 'Q' to quit:");
+        toCustomer = getToCustomer(newBankClientHandler);
         // Checking if user quits
         if (toCustomer == null) {
             newBankClientHandler.sendOutput("\nExiting to Customer Menu");
@@ -98,9 +100,9 @@ public class Transaction {
             return newBankClientHandler.printCustomerMenu();
         }
         // Confirming transaction.
-        confirmation = String.format("Transfer: £%.2f\nFrom: %s\nTo: %s %s",
+        confirmation = String.format("Transfer: £%.2d\nFrom: %s\nTo: %s %s",
                 amount, fromAccount.getAccountType(),
-                NewBank.getBank().getID(toCustomer), toAccount.getAccountType());
+                toCustomer.getUsername(), toAccount.getAccountType());
         newBankClientHandler.sendOutput(confirmation + "\nHit 'Y' to confirm, otherwise return to Customer Menu:");
         if (!getYN(newBankClientHandler)) {
             newBankClientHandler.sendOutput("\nExiting to Customer Menu");
@@ -115,7 +117,7 @@ public class Transaction {
     }
 
     // Getting user input for transfer.
-    public double getAmount(NewBankClientHandler newBankClientHandler) {
+    public int getAmount(NewBankClientHandler newBankClientHandler) {
         valid = false;
         while (!valid) {
             // Asking for amount.
@@ -128,18 +130,18 @@ public class Transaction {
             // Checking if type double.
             if (checkDouble(input)) {
                 // Checking if negative.
-                if (checkNegative(Double.parseDouble(input))) {
+                if (checkNegative(parseInt(input))) {
                     newBankClientHandler.sendOutput("Invalid negative input. Please try again:");
                 } else {
                     // Returning the input as type double if type double and non-negative.
-                    return Double.parseDouble(input);
+                    return parseInt(input);
                 }
             } else {
                 // Looping for invalid input.
                 newBankClientHandler.sendOutput("Invalid input. Please try again:");
             }
         }
-        return 0.0;
+        return 0;
     }
 
     public Account getMyAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
@@ -164,12 +166,12 @@ public class Transaction {
         return null;
     }
 
-    private Customer getToCustomer(Customer customer, NewBankClientHandler newBankClientHandler) {
+    private Customer getToCustomer(NewBankClientHandler newBankClientHandler) {
         String input;
         Customer payee;
         valid = false;
         while (!valid) {
-            // Asking for customer name.
+            // Asking for customer username.
             input = newBankClientHandler.getInput();
             // Checking if quit.
             if (checkQuitInput(input)) {
@@ -177,9 +179,9 @@ public class Transaction {
             }
             // Checking if customer exists - if so returning Customer Object
             // Else loops.
-            if (NewBank.getBank().getCustomers().containsKey(input)) {
+            if (NewBank.getBank().getCustomer(input) != null) {
                 valid = true;
-                payee = NewBank.getBank().getCustomers().get(input);
+                payee = NewBank.getBank().getCustomer(input);
                 return payee;
             } else {
                 newBankClientHandler.sendOutput("No customer found. Please try again:");
@@ -210,20 +212,20 @@ public class Transaction {
         return null;
     }
 
-    public void transferFunds(Customer customer, double amount, Account fromAccount, Account toAccount) {
+    public void transferFunds(Customer customer, int amount, Account fromAccount, Account toAccount) {
         // Subtracting amount from the 'from' account.
-        double fromBalance = fromAccount.getBalance();
+        int fromBalance = fromAccount.getBalance();
         fromAccount.setBalance(fromBalance - amount);
 
         // Adding amount to the 'to' account.
-        double toBalance = toAccount.getBalance();
+        int toBalance = toAccount.getBalance();
         toAccount.setBalance(toBalance + amount);
 
         //update database with above changes.
         try {
             int userID = db.getUserID(customer.getUsername());
-            db.updateBalance(userID, fromAccount.getAccountType().toString(), (int) (fromBalance-amount));
-            db.updateBalance(userID, toAccount.getAccountType().toString(), (int) (toBalance + amount));
+            db.updateBalance(userID, fromAccount.getAccountType().toString(),fromBalance - amount);
+            db.updateBalance(userID, toAccount.getAccountType().toString(), toBalance + amount);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,12 +243,12 @@ public class Transaction {
     }
 
     // Returning true if there are sufficient funds, else false.
-    private boolean checkSufficientFunds(double amount, Account fromAccount) {
+    private boolean checkSufficientFunds(int amount, Account fromAccount) {
         return !((fromAccount.getBalance() - amount) < 0);
     }
 
     // Returning true if argument is negative.
-    private boolean checkNegative(double d) {
+    private boolean checkNegative(int d) {
         return d < 0;
     }
 

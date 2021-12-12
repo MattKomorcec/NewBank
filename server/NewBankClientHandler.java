@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -167,10 +168,10 @@ public class NewBankClientHandler extends Thread {
 
 			Integer userAttempts = set.getValue();
 			String customer = set.getKey();
-			HashMap<String, Customer> customers = NewBank.getBank().getCustomers();
+			List<Customer> customers = NewBank.getBank().getCustomers();
 
 			if (userAttempts >= maxAttempts){
-				if (customers.containsKey(customer) &&
+				if (NewBank.getBank().getCustomer(customer) != null &&
 						!isAccountLocked(customer)) {
 					NewBank.getBank().getCustomer(customer).setAccountLocked(true);
 					out.println("The account: " + customer + " has been locked.\n");

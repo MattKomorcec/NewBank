@@ -73,7 +73,7 @@ public class Customer {
         return null;
     }
 
-	public int getId() {
+	public int getID() {
 		return id;
 	}
 
