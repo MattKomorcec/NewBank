@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.List;
 
 public class NewBankServer extends Thread {
 
@@ -15,11 +14,8 @@ public class NewBankServer extends Thread {
     }
 
     public static void main(String[] args) throws IOException, SQLException {
-        new NewBankServer(14005).start();
+        new NewBankServer(14000).start();
 
-        UserRegistration ur = new UserRegistration();
-        //needed to call user reg class.
-        ur.newUser();
     }
 
     public void run() {

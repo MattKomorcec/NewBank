@@ -2,18 +2,28 @@ package newbank.server;
 
 import java.util.ArrayList;
 
-public class Customer {
+public class Customer extends User {
 
 	private boolean accountLocked;
+	private ArrayList<Account> accounts;
 
-    String username;
-    String password;
-    private ArrayList<Account> accounts;
+	public Customer(int id, String dob, String username, String password,
+					String secretAnswer, int AccountLocked, String fullname) {
 
-	public Customer(String username, String password) {
+		super(id, dob, username, password, secretAnswer, AccountLocked, fullname);
+
 		accounts = new ArrayList<>();
-		this.username = username;
-		this.password = password;
+		retrieveAccounts();
+	}
+
+	public void retrieveAccounts() {
+		Database database = new Database();
+		this.accounts = database.getAccounts(getUserId());
+	}
+
+	public Customer retrieveCustomers() {
+		Database database = new Database();
+		return database.getCustomer(getUserId());
 	}
 
 	public String accountsToString() {
@@ -48,21 +58,13 @@ public class Customer {
 		return false;
 	}
 
-    public Account getExistingAccount(String accountType) {
-        for (Account a : accounts) {
-            if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
-                return a;
-            }
-        }
-        return null;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-	public String getPassword() {
-		return password;
+	public Account getExistingAccount(String accountType) {
+		for (Account a : accounts) {
+			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
+				return a;
+			}
+		}
+		return null;
 	}
 
 	public void setAccountLocked(boolean value){

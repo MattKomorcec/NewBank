@@ -10,59 +10,6 @@ public class Database {
     private Connection conn = null;
 
     /**
-     * Returns all customers from the database.
-     *
-     * @return All customers
-     * @throws SQLException Thrown exception
-     */
-    public List<Customer> getAllCustomers() throws SQLException {
-        try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
-
-            // SQL query that gets all entries from the users table
-            String query = "SELECT * FROM users";
-            PreparedStatement statement = conn.prepareStatement(query);
-
-            // Executes the query, and retrieves the results
-            ResultSet results = statement.executeQuery();
-
-            ArrayList<Customer> customers = new ArrayList<>();
-
-            while (results.next()) {
-                // Gets all the values from the results of running the query
-                int id = results.getInt("id");
-                String name = results.getString("name");
-                int accountNumber = results.getInt("account_number");
-
-                // Creates an object of a customer class, using the retrieved values
-                Customer customer = new Customer(name, String.valueOf(accountNumber));
-
-                customers.add(customer);
-
-                if (debug) {
-                    System.out.println(id + ". " + name + ", " + accountNumber);
-                }
-            }
-
-            return customers;
-        } catch (Exception e) {
-            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            return null;
-        } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
      * Creates a new user and inserts it into the database.
      *
      * @param dob            Date of birth
@@ -170,4 +117,143 @@ public class Database {
             }
         }
     }
+
+    /**
+     * Method to retrieve account data from the database and create an array of Account objects associated with a customer
+     *
+     * @param userId
+     * @return List of Accounts for a Customer (empty array if no accounts found)
+     */
+    public ArrayList <Account> getAccounts(int userId) {
+        ArrayList<Account> accounts = new ArrayList<>();
+        try {
+            // Opens a connection to the database
+            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+            conn.setAutoCommit(false);
+            String query = "SELECT * FROM accounts WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                String accountNumber = rs.getString("account_number");
+                String accountType = rs.getString("account_type");
+                int balance = rs.getInt("balance");
+                String sortCode= rs.getString("sortcode");
+
+                Account.AccountType AccountType;
+                if (accountType.equalsIgnoreCase(Account.AccountType.MAIN.toString())) {
+                    AccountType = Account.AccountType.MAIN;
+                } else if (accountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
+                    AccountType = Account.AccountType.SAVINGS;
+                } else {
+                    AccountType = Account.AccountType.INVESTMENTS;
+                }
+                accounts.add(new Account(accountNumber, AccountType, balance, sortCode));
+            }
+        } catch (SQLException e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+        } finally {
+            // Closes the database connection if it's not closed already
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            }
+        }
+        return accounts;
+    }
+
+    /**
+     * Method to retrieve account data from the database and create Customer Object
+     *
+     * @param userId
+     * @return Customer
+     */
+    public Customer getCustomer(int userId) {
+        try {
+            // Opens a connection to the database
+            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+            conn.setAutoCommit(false);
+            String query = "SELECT * FROM users WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                String dob = rs.getString("dob");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String secretAnswer= rs.getString("secret_answer");
+                int accountLocked = rs.getInt("account_locked");
+                String fullname = rs.getString("full_name");
+                return new Customer (id, dob, username, password, secretAnswer, accountLocked, fullname);
+            }
+        } catch (SQLException e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+        } finally {
+            // Closes the database connection if it's not closed already
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns all customers from the database.
+     *
+     * @return All customers
+     * @throws SQLException Thrown exception
+     */
+    public List<Customer> getAllCustomers() {
+        try {
+            // Opens a connection to the database
+            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+            conn.setAutoCommit(false);
+
+            // SQL query that gets all entries from the users table
+            String query = "SELECT * FROM users";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // Executes the query, and retrieves the results
+            ResultSet rs= statement.executeQuery();
+
+            ArrayList<Customer> customers = new ArrayList<>();
+
+            while (rs.next()) {
+                // Gets all the values from the results of running the query
+                int id = rs.getInt("id");
+                String dob = rs.getString("dob");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String secretAnswer= rs.getString("secret_answer");
+                int accountLocked = rs.getInt("account_locked");
+                String fullname = rs.getString("full_name");
+
+                // Creates an object of a customer class, using the retrieved values
+                Customer customer = new Customer (id, dob, username, password, secretAnswer, accountLocked, fullname);
+                customers.add(customer);
+            }
+            return customers;
+        } catch (SQLException e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            return null;
+        } finally {
+            // Closes the database connection if it's not closed already
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            }
+        }
+    }
+
 }

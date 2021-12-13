@@ -5,37 +5,37 @@ import java.util.Map.Entry;
 
 public class NewBank {
 
-	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
+    private static final NewBank bank = new NewBank();
+    private HashMap<String, Customer> customers;
 
-	//Initialising AccountManagement Object
-	private AccountManagement accountManagement = new AccountManagement();
+    //Initialising AccountManagement Object
+    private AccountManagement accountManagement = new AccountManagement();
 
-	// Initialising Transaction Object
-	private Transaction transaction = new Transaction();
+    // Initialising Transaction Object
+    private Transaction transaction = new Transaction();
 
-	private NewBank() {
-		customers = new HashMap<>();
-		addTestData();
-	}
+    private NewBank() {
+        customers = new HashMap<>();
+        addTestData();
+    }
 
     public static NewBank getBank() {
         return bank;
     }
 
     private void addTestData() {
-        Customer bhagy = new Customer("Bhagy", "1234");
-        bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
-        customers.put(bhagy.getUsername(), bhagy);
+        Database database = new Database();
+        Customer customer = database.getCustomer(1);
+        customers.put(customer.getUsername(), customer);
 
-		Customer christina = new Customer("Christina", "1234");
-		christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
-		customers.put(christina.getUsername(), christina);
+        //Customer christina = new Customer("Christina", "1234");
+        //christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
+        //customers.put(christina.getUsername(), christina);
 
-		Customer john = new Customer("Johh","1234");
-		john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
-		customers.put(john.getUsername(), john);
-	}
+        //Customer john = new Customer("Johh","1234");
+        //john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
+        //customers.put(john.getUsername(), john);
+    }
 
     public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
         if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
@@ -59,8 +59,8 @@ public class NewBank {
             switch (request) {
                 case "1":
                     return accountManagement.showMyAccounts(customer, newBankClientHandler);
-                case "2":
-                    return accountManagement.newAccount(customer, newBankClientHandler);
+                //case "2":
+                //return accountManagement.newAccount(customer, newBankClientHandler);
                 case "3":
                     return transaction.moveFunds(customer, newBankClientHandler);
                 case "4":
@@ -78,16 +78,16 @@ public class NewBank {
         return customers;
     }
 
-	public String getID(Customer c) {
-		for (Entry<String, Customer> entry : customers.entrySet()) {
-			if (entry.getValue().equals(c)) {
-				return entry.getKey();
-			}
-		}
-		return "";
-	}
+    public String getID(Customer c) {
+        for (Entry<String, Customer> entry : customers.entrySet()) {
+            if (entry.getValue().equals(c)) {
+                return entry.getKey();
+            }
+        }
+        return "";
+    }
 
-	public Customer getCustomer(String username){
-		return customers.get(username);
-	}
+    public Customer getCustomer(String username){
+        return customers.get(username);
+    }
 }

@@ -12,7 +12,7 @@ public class AccountManagement {
         newBankClientHandler.sendOutput("\nExiting to Customer Menu.");
         return newBankClientHandler.printCustomerMenu();
     }
-
+    /*
     public String newAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
 
         boolean valid = false;
@@ -66,6 +66,7 @@ public class AccountManagement {
         newBankClientHandler.sendOutput("New account was successfully created. Exiting to Customer Menu.");
         return newBankClientHandler.printCustomerMenu();
     }
+    */
 
     public String removeAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
 

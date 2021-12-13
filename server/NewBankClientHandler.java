@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class NewBankClientHandler extends Thread {
 
@@ -33,7 +33,6 @@ public class NewBankClientHandler extends Thread {
 				printInitialMenu();
 				switch (in.readLine()) {
 					case "1":
-
 						//If 3 failed login attempts during session, does not allow login
 						if (failedLogInUsers.size()>4) {
 							out.println("There have been too many unsuccessful login attempts, " +
@@ -82,9 +81,16 @@ public class NewBankClientHandler extends Thread {
 								lockUsers(logInFrequencyMap, 3);
 							}
 						}
-
 						break;
 					case "2":
+						try {
+							out.println("You will now be registered as a new user. Please fill all the required entries. [Change To NewBankServer Terminal]");
+							UserRegistration ur = new UserRegistration();
+							//needed to call user reg class.
+							ur.newUser();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
 						break;
 				}
 			}
@@ -186,6 +192,7 @@ public class NewBankClientHandler extends Thread {
     the database stores accountLocked variable. Currently resetting connection resets
     the customer HashMap
 	*/
+
 	private boolean isAccountLocked(String userName){
 		return NewBank.getBank().getCustomer(userName).isAccountLocked();
 	}
