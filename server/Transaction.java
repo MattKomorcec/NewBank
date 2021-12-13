@@ -236,6 +236,7 @@ public class Transaction {
         // Checking if input string is of double format.
         try {
             Double.parseDouble(s);
+
         } catch (NumberFormatException e) {
             return false;
         }

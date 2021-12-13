@@ -94,6 +94,7 @@ public class Customer {
 		int value = (locked) ? 1 : 0;
 		try {
 			database.setLockAccount(username, value);
+
 		}catch (Exception e){
 			System.out.println("EXCEPTION!! Customer.java: " + e.getMessage());
 		}

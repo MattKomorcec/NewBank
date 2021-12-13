@@ -142,10 +142,12 @@ public class Database {
             }
 
             return userId;
+
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             conn.rollback();
             return null;
+
         } finally {
             closeConnection();
         }
@@ -185,6 +187,7 @@ public class Database {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             conn.rollback();
             return false;
+
         } finally {
             closeConnection();
         }
@@ -275,6 +278,7 @@ public class Database {
             if (conn != null) {
                 conn.close();
             }
+
         } catch (SQLException e) {
             conn.rollback();
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
