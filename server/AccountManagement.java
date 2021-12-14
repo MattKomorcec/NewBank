@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 public class AccountManagement {
 
-    Account selectedAccount;
-
     public String showMyAccounts(Customer customer, NewBankClientHandler newBankClientHandler) {
         newBankClientHandler.sendOutput("Selected: Show existing accounts and balance\n");
         newBankClientHandler.sendOutput(customer.accountsToString());
@@ -16,7 +14,7 @@ public class AccountManagement {
     public String newAccount(Customer customer, NewBankClientHandler newBankClientHandler) {
 
         boolean valid = false;
-        String newAccountType = "";
+        String newAccountType;
         ArrayList<Account> existAccounts;
         newBankClientHandler.sendOutput("Selected: Create new account");
 
@@ -46,15 +44,15 @@ public class AccountManagement {
                 Account.AccountType accountType;
                 if (newAccountType.equalsIgnoreCase(Account.AccountType.MAIN.toString())) {
                     accountType = Account.AccountType.MAIN;
-                    customer.addAccount(new Account(accountType, 0.0));
+                    customer.addAccount(new Account(null, accountType.toString(),0, null, customer.getID()));
                     valid = true;
                 } else if (newAccountType.equalsIgnoreCase(Account.AccountType.SAVINGS.toString())) {
                     accountType = Account.AccountType.SAVINGS;
-                    customer.addAccount(new Account(accountType, 0.0));
+                    customer.addAccount(new Account(null, accountType.toString(),0, null, customer.getID()));
                     valid = true;
                 } else if (newAccountType.equalsIgnoreCase(Account.AccountType.INVESTMENTS.toString())) {
                     accountType = Account.AccountType.INVESTMENTS;
-                    customer.addAccount(new Account(accountType, 0.0));
+                    customer.addAccount(new Account(null, accountType.toString(),0, null, customer.getID()));
                     valid = true;
                 } else {
                     newBankClientHandler.sendOutput("An appropriate account type must be selected [MAIN, SAVINGS, INVESTMENTS]. Please try again:");

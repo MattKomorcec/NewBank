@@ -1,61 +1,52 @@
 package newbank.server;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.List;
 
 public class NewBank {
 
-	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
+    private static final NewBank bank = new NewBank();
+    private Database db = new Database();
+    private List<Customer> customers;
 
-	//Initialising AccountManagement Object
-	private AccountManagement accountManagement = new AccountManagement();
+    //Initialising AccountManagement Object
+    private AccountManagement accountManagement = new AccountManagement();
 
-	// Initialising Transaction Object
-	private Transaction transaction = new Transaction();
+    // Initialising Transaction Object
+    private Transaction transaction = new Transaction();
 
-	private NewBank() {
-		customers = new HashMap<>();
-		addTestData();
-	}
+    private NewBank() {
+        try {
+            customers = db.getAllCustomers();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static NewBank getBank() {
         return bank;
     }
 
-    private void addTestData() {
-        Customer bhagy = new Customer("Bhagy", "1234");
-        bhagy.addAccount(new Account(Account.AccountType.MAIN, 1000.0));
-        customers.put(bhagy.getUsername(), bhagy);
-
-		Customer christina = new Customer("Christina", "1234");
-		christina.addAccount(new Account(Account.AccountType.SAVINGS, 1500.0));
-		customers.put(christina.getUsername(), christina);
-
-		Customer john = new Customer("Johh","1234");
-		john.addAccount(new Account(Account.AccountType.INVESTMENTS, 250.0));
-		customers.put(john.getUsername(), john);
-	}
-
     public synchronized Customer checkLogInDetails(String username, String password, NewBankClientHandler newBankClientHandler) {
-        if (customers.containsKey(username) && customers.get(username).getPassword().equals(password)) {
-            newBankClientHandler.sendOutput("-Username correct");
-            newBankClientHandler.sendOutput("-Password correct");
-            return customers.get(username);
-        } else if (!customers.containsKey(username)) {
-            newBankClientHandler.sendOutput("-Wrong username\n");
-            return null;
-        } else if (!customers.get(username).getPassword().equals(password)) {
-            newBankClientHandler.sendOutput("-Wrong password\n");
-            return null;
-        } else {
-            return null;
+
+        for (Customer c : customers) {
+            if (c.getUsername().equals(username)) {
+
+                if (c.getPassword().equals(password)) {
+                    newBankClientHandler.sendOutput("-Username and Password correct");
+                    return c;
+                } else {
+                    newBankClientHandler.sendOutput("-Wrong password\n");
+                    return null;
+                }
+            }
         }
+        newBankClientHandler.sendOutput("-Wrong username\n");
+        return null;
     }
 
     // Commands from the NewBank customer are processed in this method.
     public synchronized String processRequest(Customer customer, String request, NewBankClientHandler newBankClientHandler) {
-        if (customers.containsKey(customer.getUsername())) {
+        if (customers.contains(customer)) {
             switch (request) {
                 case "1":
                     return accountManagement.showMyAccounts(customer, newBankClientHandler);
@@ -74,20 +65,17 @@ public class NewBank {
         return "FAIL";
     }
 
-    public HashMap<String, Customer> getCustomers() {
+    public Customer getCustomer(String username) {
+        for (Customer c : customers) {
+            if (c.getUsername().equals(username)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public List<Customer> getCustomers() {
         return customers;
     }
 
-	public String getID(Customer c) {
-		for (Entry<String, Customer> entry : customers.entrySet()) {
-			if (entry.getValue().equals(c)) {
-				return entry.getKey();
-			}
-		}
-		return "";
-	}
-
-	public Customer getCustomer(String username){
-		return customers.get(username);
-	}
 }

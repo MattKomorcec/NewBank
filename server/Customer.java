@@ -4,16 +4,28 @@ import java.util.ArrayList;
 
 public class Customer {
 
+	private final int id;
+	private final String dob;
+    private final String username;
+    private String password;
+	private String secretAnswer;
 	private boolean accountLocked;
-
-    String username;
-    String password;
+	private String fullName;
     private ArrayList<Account> accounts;
+    Database database = new Database();
 
-	public Customer(String username, String password) {
+	public Customer(int id, String dob, String username, String password, String secretAnswer,
+					boolean accountLocked, String fullName) {
+
 		accounts = new ArrayList<>();
+		this.id = id;
+		this.dob = dob;
 		this.username = username;
 		this.password = password;
+		this.secretAnswer = secretAnswer;
+		this.accountLocked = accountLocked;
+		this.fullName = fullName;
+
 	}
 
 	public String accountsToString() {
@@ -39,6 +51,10 @@ public class Customer {
 		return accounts;
 	}
 
+	public void setAccounts(ArrayList<Account> accountArrayList){
+		accounts = accountArrayList;
+	}
+
 	public boolean checkExistingAccount(String accountType) {
 		for (Account a : accounts) {
 			if (a.getAccountType().toString().equalsIgnoreCase(accountType)) {
@@ -57,6 +73,10 @@ public class Customer {
         return null;
     }
 
+	public int getID() {
+		return id;
+	}
+
     public String getUsername() {
         return username;
     }
@@ -65,12 +85,18 @@ public class Customer {
 		return password;
 	}
 
-	public void setAccountLocked(boolean value){
-		accountLocked = value;
-	}
-
 	public boolean isAccountLocked() {
 		return accountLocked;
 	}
 
+	public void setAccountLocked(boolean locked){
+		accountLocked = locked;
+		int value = (locked) ? 1 : 0;
+		try {
+			database.setLockAccount(username, value);
+
+		}catch (Exception e){
+			System.out.println("EXCEPTION!! Customer.java: " + e.getMessage());
+		}
+	}
 }

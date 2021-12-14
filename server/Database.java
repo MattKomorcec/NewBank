@@ -8,6 +8,7 @@ public class Database {
     public static final String DB_CONNECTION_STRING = "jdbc:sqlite:database.db";
     private final boolean debug = false;
     private Connection conn = null;
+    ArrayList<Customer> customers = new ArrayList<>();
 
     /**
      * Returns all customers from the database.
@@ -17,9 +18,8 @@ public class Database {
      */
     public List<Customer> getAllCustomers() throws SQLException {
         try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             // SQL query that gets all entries from the users table
             String query = "SELECT * FROM users";
@@ -28,38 +28,75 @@ public class Database {
             // Executes the query, and retrieves the results
             ResultSet results = statement.executeQuery();
 
-            ArrayList<Customer> customers = new ArrayList<>();
-
             while (results.next()) {
                 // Gets all the values from the results of running the query
                 int id = results.getInt("id");
-                String name = results.getString("name");
-                int accountNumber = results.getInt("account_number");
+                String dob = results.getString("dob");
+                String username = results.getString("username");
+                String password = results.getString("password");
+                String secretAnswer = results.getString("secret_answer");
+                boolean accountLocked = results.getBoolean("account_locked");
+                String fullName = results.getString("full_name");
 
                 // Creates an object of a customer class, using the retrieved values
-                Customer customer = new Customer(name, String.valueOf(accountNumber));
+                Customer customer = new Customer(id, dob, username, password, secretAnswer, accountLocked, fullName);
 
                 customers.add(customer);
 
+                // Adds an ArrayList of the customer's accounts
+                customer.setAccounts(getCustomerAccounts(id));
+
                 if (debug) {
-                    System.out.println(id + ". " + name + ", " + accountNumber);
+                    System.out.println(id + ". " + username);
                 }
             }
 
-            return customers;
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             return null;
+
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
+            closeConnection();
         }
+
+        return customers;
+    }
+
+    // Returns an ArrayList of Account objects for a given user ID
+    public ArrayList<Account> getCustomerAccounts(int userNumber) throws SQLException {
+
+        ArrayList<Account> accounts = new ArrayList<>();
+        try {
+
+            // SQL query that gets all entries from the users table
+            String query = "SELECT * FROM accounts WHERE user_id = ? ";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, userNumber);
+
+            // Executes the query, and retrieves the results
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                // Gets all the values from the results of running the query
+                String accountNumber = results.getString("account_number");
+                String accountType = results.getString("account_type");
+                int balance = results.getInt("balance");
+                String sortCode = results.getString("sortcode");
+                int userID = results.getInt("user_id");
+
+                Account account = new Account(accountNumber, accountType, balance, sortCode, userID);
+                accounts.add(account);
+
+                if (debug) {
+                    System.out.println(userID + ". " + accountNumber);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            return null;
+        }
+        return accounts;
     }
 
     /**
@@ -77,9 +114,8 @@ public class Database {
         try {
             // 0 - false, 1 - true
             int ACCOUNT_LOCKED_INITIAL = 0;
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             String addNewUser = "INSERT INTO users(dob, username, password, secret_answer, account_locked, full_name) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -106,20 +142,14 @@ public class Database {
             }
 
             return userId;
+
         } catch (Exception e) {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             conn.rollback();
             return null;
+
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
-            }
+            closeConnection();
         }
     }
 
@@ -136,9 +166,8 @@ public class Database {
      */
     public boolean createAccount(String accountNumber, Account.AccountType accountType, String sortCode, int balance, int userId) throws SQLException {
         try {
-            // Opens a connection to the database
-            conn = DriverManager.getConnection(DB_CONNECTION_STRING);
-            conn.setAutoCommit(false);
+
+            openConnection();
 
             String query = "INSERT INTO accounts(account_number, account_type, balance, sortcode, user_id) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(query);
@@ -158,16 +187,101 @@ public class Database {
             System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
             conn.rollback();
             return false;
+
         } finally {
-            // Closes the database connection if it's not closed already
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            closeConnection();
+        }
+    }
+
+    //sets the account lock status given the unique username and either 0 (unlocked) or 1 (locked)
+    public void setLockAccount(String username, int value) throws SQLException {
+        try {
+
+            openConnection();
+
+            String update = "UPDATE users SET account_locked = ? WHERE username = ? ";
+            PreparedStatement statement = conn.prepareStatement(update);
+
+            statement.setInt(1, value);
+            statement.setString(2, username);
+
+            statement.executeUpdate();
+            conn.commit();
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        } finally {
+            closeConnection();
+        }
+    }
+
+    public void updateBalance(int id, String accountType, int balance) throws SQLException {
+        try{
+            openConnection();
+
+            String update = "UPDATE accounts SET balance = ? WHERE user_id = ? AND account_type = ? ";
+            PreparedStatement statement = conn.prepareStatement(update);
+
+            statement.setInt(1, balance);
+            statement.setInt(2, id);
+            statement.setString(3, accountType);
+
+            statement.executeUpdate();
+            conn.commit();
+
+        } catch (Exception e) {
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        } finally {
+            closeConnection();
+        }
+    }
+
+    public boolean checkColumnContainsValue(int id, String columnName, String valueToFind) throws SQLException {
+
+        boolean exist = false;
+        try{
+            openConnection();
+
+            String query = "SELECT EXISTS(SELECT * FROM accounts WHERE (accounts.id = ? AND ? = ?))";
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            statement.setInt(1, id);
+            statement.setString(2, columnName);
+            statement.setString(3, valueToFind);
+
+            ResultSet result = statement.executeQuery();
+            exist = result.getBoolean(1);
+
+        }catch (Exception e){
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
+            conn.rollback();
+
+        }finally{
+            closeConnection();
+        }
+        return exist;
+    }
+
+    private void openConnection() throws SQLException {
+        // Opens a connection to the database
+        conn = DriverManager.getConnection(DB_CONNECTION_STRING);
+        conn.setAutoCommit(false);
+    }
+
+    private void closeConnection() throws SQLException{
+        // Closes the database connection if it's not closed already
+        try {
+            if (conn != null) {
+                conn.close();
             }
+
+        } catch (SQLException e) {
+            conn.rollback();
+            System.out.println("EXCEPTION!! Database.java: " + e.getMessage());
         }
     }
 }
