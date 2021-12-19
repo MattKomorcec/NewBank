@@ -71,9 +71,9 @@ All customer data is contained within this table and is used to check or update 
 
 <img width="952" alt="Screenshot 2021-12-15 at 01 46 27" src="https://user-images.githubusercontent.com/64655977/146112126-b6a717eb-5d58-49cf-a8d8-f3b676065957.png">
 
-The users table also contains a foreign key that links to the account type database as shown below to accommodate different account types.
-
 ### Account Type Database
+
+The account table contains a foreign key that links to the user type database as shown below to accommodate different account types.
 
 <img width="845" alt="Screenshot 2021-12-15 at 01 43 30" src="https://user-images.githubusercontent.com/64655977/146112164-05cd9235-2474-434d-b695-f18da293a089.png">
 
